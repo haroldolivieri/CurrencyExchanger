@@ -1,0 +1,32 @@
+apply plugin: 'kotlin'
+
+buildscript {
+
+   ext.kotlin_version = '1.2.41'
+   ext.support_version = '26.1.0'
+   ext.dagger_version = '2.11'
+   ext.retrofit_version = '2.3.0'
+   ext.rx_version = '2.1.14'
+   ext.okhttp3_version = '3.9.1'
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+clean {
+    delete rootProject.buildDir
+}
