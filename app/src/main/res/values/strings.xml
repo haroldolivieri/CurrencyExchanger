@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">Currency Exchanger</string>
+
+    <string name="aud_currency_name">Australian Dollar</string>
+    <string name="bgn_currency_name">Bulgarian Lev</string>
+    <string name="brl_currency_name">Brazilian Real</string>
+    <string name="cad_currency_name">Canadian Dollar</string>
+    <string name="chf_currency_name">Swiss Franc</string>
+    <string name="cny_currency_name">Chinese Yuan</string>
+    <string name="czk_currency_name">Czech Koruna</string>
+    <string name="dkk_currency_name">Danish Krone</string>
+    <string name="gbp_currency_name">British Pound</string>
+    <string name="hkd_currency_name">Hong Kong Dollar</string>
+    <string name="hrk_currency_name">Croatian Kune</string>
+    <string name="huf_currency_name">Hungarian Forint</string>
+    <string name="idr_currency_name">Indonesian Rupiah</string>
+    <string name="ils_currency_name">Israeli New Sheqel</string>
+    <string name="inr_currency_name">India Rupee</string>
+    <string name="isk_currency_name">Icelandic Krona</string>
+    <string name="jpy_currency_name">Japanese Yen</string>
+    <string name="krw_currency_name">South Korean Won</string>
+    <string name="mxn_currency_name">Mexican Pesos</string>
+    <string name="myr_currency_name">Malaysian Ringgit</string>
+    <string name="nok_currency_name">Norwegian Krone</string>
+    <string name="nzd_currency_name">New Zealand Dollar</string>
+    <string name="php_currency_name">Philippine Piso</string>
+    <string name="pln_currency_name">Polish Zloty</string>
+    <string name="ron_currency_name">Romanian Leu</string>
+    <string name="rub_currency_name">Russian Ruble</string>
+    <string name="sek_currency_name">Swedish Krona</string>
+    <string name="sgd_currency_name">Singapore Dollar</string>
+    <string name="thb_currency_name">Thai Baht</string>
+    <string name="try_currency_name">Turkish Lira</string>
+    <string name="usd_currency_name">US Dollar</string>
+    <string name="zar_currency_name">South African Rand</string>
+
+    <string name="font_montserrat_regular">font/MontSerrat_Regular</string>
 </resources>
