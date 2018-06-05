@@ -13,6 +13,7 @@ fun Currency.currencyName() : Int {
         Currency.CNY -> R.string.cny_currency_name
         Currency.CZK -> R.string.czk_currency_name
         Currency.DKK -> R.string.dkk_currency_name
+        Currency.EUR -> R.string.eur_currency_name
         Currency.GBP -> R.string.gbp_currency_name
         Currency.HKD -> R.string.hkd_currency_name
         Currency.HRK -> R.string.hrk_currency_name
@@ -50,6 +51,7 @@ fun Currency.currencyImage() : Int {
         Currency.CNY -> R.drawable.cny
         Currency.CZK -> R.drawable.czk
         Currency.DKK -> R.drawable.dkk
+        Currency.EUR -> R.drawable.eur
         Currency.GBP -> R.drawable.gbp
         Currency.HKD -> R.drawable.hkd
         Currency.HRK -> R.drawable.hrk

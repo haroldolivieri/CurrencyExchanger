@@ -9,6 +9,7 @@
     <string name="cny_currency_name">Chinese Yuan</string>
     <string name="czk_currency_name">Czech Koruna</string>
     <string name="dkk_currency_name">Danish Krone</string>
+    <string name="eur_currency_name">Euro</string>
     <string name="gbp_currency_name">British Pound</string>
     <string name="hkd_currency_name">Hong Kong Dollar</string>
     <string name="hrk_currency_name">Croatian Kune</string>

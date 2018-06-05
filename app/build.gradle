@@ -27,8 +27,13 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "HOST", "\"https://dos-dot-udrink-159617.appspot.com\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField("String", "HOST", "\"https://dos-dot-udrink-159617.appspot.com\"")
         }
     }
 }
@@ -48,6 +53,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
 
     //Okhhtp
     implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
