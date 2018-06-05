@@ -7,6 +7,6 @@ import haroldolivieri.currencyexchanger.feature.CurrencyListModule
 
 @Module
 abstract class ActivityBuilderModule {
-    @ContributesAndroidInjector(modules = [CurrencyListModule::class])
+    @ContributesAndroidInjector(modules = [CurrencyListModule::class, RemoteModule::class])
     internal abstract fun bindMainActivity(): CurrencyListActivity
 }

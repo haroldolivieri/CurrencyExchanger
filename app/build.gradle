@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "haroldolivieri.currencyexchanger"
         minSdkVersion 21
@@ -27,13 +27,13 @@ android {
 
     buildTypes {
         release {
-            buildConfigField("String", "HOST", "\"https://dos-dot-udrink-159617.appspot.com\"")
+            buildConfigField("String", "HOST", "\"https://revolut.duckdns.org\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            buildConfigField("String", "HOST", "\"https://dos-dot-udrink-159617.appspot.com\"")
+            buildConfigField("String", "HOST", "\"https://revolut.duckdns.org\"")
         }
     }
 }
@@ -67,6 +67,8 @@ dependencies {
 
     implementation "uk.co.chrisjenx:calligraphy:2.3.0"
     implementation "com.github.bumptech.glide:glide:4.0.0"
+    implementation "de.hdodenhof:circleimageview:2.1.0"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.1.1"
 
     testImplementation 'junit:junit:4.12'
 

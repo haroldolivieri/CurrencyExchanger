@@ -3,7 +3,7 @@ apply plugin: 'kotlin'
 buildscript {
 
    ext.kotlin_version = '1.2.41'
-   ext.support_version = '26.1.0'
+   ext.support_version = '27.1.1'
    ext.dagger_version = '2.11'
    ext.retrofit_version = '2.3.0'
    ext.rx_version = '2.1.14'

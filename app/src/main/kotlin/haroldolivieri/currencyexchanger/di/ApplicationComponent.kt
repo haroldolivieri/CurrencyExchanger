@@ -10,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [(AndroidSupportInjectionModule::class),
-    (ApplicationModule::class), (ActivityBuilderModule::class)])
+    (ApplicationModule::class),
+    (ActivityBuilderModule::class)])
 interface ApplicationComponent : AndroidInjector<CurrencyExchangerApp> {
 
     @Component.Builder

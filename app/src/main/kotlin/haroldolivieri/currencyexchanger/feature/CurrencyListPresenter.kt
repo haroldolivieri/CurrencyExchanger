@@ -12,6 +12,8 @@ class CurrencyListPresenter
         private val currencyRatingService: CurrencyRatingService):
         CurrencyListContract.Presenter {
 
+    private var selectedBaseCurrency = Currency.EUR
+
     override fun onCreate() {
         fetchRates()
     }
@@ -20,22 +22,25 @@ class CurrencyListPresenter
         TODO("not implemented")
     }
 
-    override fun changeBaseCurrency() {
-        TODO("not implemented")
+    override fun changeBaseCurrency(currency: Currency) {
+        selectedBaseCurrency = currency
     }
 
     override fun amountChanged(amount: Long, currentCurrency: Currency) {
         TODO("not implemented")
     }
 
-    private fun fetchRates(currency : Currency = Currency.EUR) {
-        currencyRatingService.getRatesbyCurrencyBase(currency.name)
+    private fun fetchRates(currency : Currency = selectedBaseCurrency) {
+        currencyRatingService.getRatesByCurrencyBase(currency.name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ rate ->
+                    val pairList = rate.rates.map{ Pair(it.key, it.value)}
+                    view.showCurrencyList(pairList)
                     view.showRateInfo(rate.date, rate.currencyBase)
-
-                }, {t -> })
+                }, {t ->
+                    view.showError(t.message)
+                })
     }
 
 }
