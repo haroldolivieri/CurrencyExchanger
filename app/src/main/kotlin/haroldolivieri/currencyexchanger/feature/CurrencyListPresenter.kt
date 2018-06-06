@@ -1,9 +1,12 @@
 package haroldolivieri.currencyexchanger.feature
 
 import haroldolivieri.currencyexchanger.domain.Currency
+import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import haroldolivieri.currencyexchanger.remote.CurrencyRatingService
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -12,6 +15,8 @@ class CurrencyListPresenter
         private val currencyRatingService: CurrencyRatingService):
         CurrencyListContract.Presenter {
 
+    private val worker = Schedulers.io().createWorker()
+
     private var selectedBaseCurrency = Currency.EUR
 
     override fun onCreate() {
@@ -19,7 +24,7 @@ class CurrencyListPresenter
     }
 
     override fun onDestroy() {
-        TODO("not implemented")
+        worker.dispose()
     }
 
     override fun changeBaseCurrency(currency: Currency) {
@@ -31,16 +36,17 @@ class CurrencyListPresenter
     }
 
     private fun fetchRates(currency : Currency = selectedBaseCurrency) {
-        currencyRatingService.getRatesByCurrencyBase(currency.name)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ rate ->
-                    val pairList = rate.rates.map{ Pair(it.key, it.value)}
-                    view.showCurrencyList(pairList)
-                    view.showRateInfo(rate.date, rate.currencyBase)
-                }, {t ->
-                    view.showError(t.message)
-                })
+        worker.schedulePeriodically({
+            currencyRatingService.getRatesByCurrencyBase(currency.name)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ rate ->
+                        val currencyItems = rate.rates.map{CurrencyItem(it.key, it.value)}
+                        view.showCurrencyList(currencyItems)
+                        view.showRateInfo(rate.date, rate.currencyBase)
+                    }, {t ->
+                        view.showError(t.message)
+                    })
+        }, 0, 1, TimeUnit.SECONDS)
     }
 
 }

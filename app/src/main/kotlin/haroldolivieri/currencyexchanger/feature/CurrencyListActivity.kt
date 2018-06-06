@@ -2,12 +2,14 @@ package haroldolivieri.currencyexchanger.feature
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import dagger.android.support.DaggerAppCompatActivity
 
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.Currency
+import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import kotlinx.android.synthetic.main.activity_main.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.util.*
@@ -42,7 +44,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 
-    override fun showCurrencyList(rates: List<Pair<Currency, Float>>) {
+    override fun showCurrencyList(rates: List<CurrencyItem>) {
+
         currencyAdapter.setRates(rates)
     }
 
@@ -55,7 +58,12 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     }
 
     private fun setupRecyclerView() {
-        currencyList.layoutManager = LinearLayoutManager(this)
+        val linearLayoutManager = LinearLayoutManager(this)
+        val dividerItemDecoration = DividerItemDecoration(currencyList.context,
+                linearLayoutManager.orientation)
+
+        currencyList.addItemDecoration(dividerItemDecoration)
+        currencyList.layoutManager = linearLayoutManager
         currencyList.adapter = currencyAdapter
     }
 
