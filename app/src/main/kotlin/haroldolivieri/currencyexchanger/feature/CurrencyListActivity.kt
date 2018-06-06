@@ -25,6 +25,7 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
     private val currencyAdapter by lazy {
         CurrencyAdapter(itemClick = {
+            currencyList.scrollToPosition(0)
         })
     }
 
@@ -45,7 +46,6 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     }
 
     override fun showCurrencyList(rates: List<CurrencyItem>) {
-
         currencyAdapter.setRates(rates)
     }
 

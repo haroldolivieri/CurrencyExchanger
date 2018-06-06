@@ -2,8 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="80dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:focusable="true">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/currencyImage"
@@ -21,7 +24,7 @@
         android:id="@+id/currencyName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        tools:text="GBP"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/currencyDescription"
         app:layout_constraintStart_toStartOf="@+id/currencyDescription"
@@ -33,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:text="TextView"
+        tools:text="British Pound"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/currencyImage"
         app:layout_constraintTop_toBottomOf="@+id/currencyName" />
@@ -50,15 +53,17 @@
 
     <EditText
         android:id="@+id/amountInput"
+        android:clickable="false"
+        android:duplicateParentState="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:hint="0"
+        android:hint="@string/_0"
         android:inputType="number"
-        android:maxLength="10"
+        android:maxLength="8"
         android:singleLine="true"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,6 +71,4 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/barrier7"
         app:layout_constraintTop_toTopOf="parent" />
-
-
 </android.support.constraint.ConstraintLayout>

@@ -39,4 +39,5 @@
     <string name="font_montserrat_regular">fonts/Montserrat_Regular.ttf</string>
     <string name="font_montserrat_semi_bold">fonts/Montserrat_SemiBold.ttf</string>
     <string name="font_montserrat_black">fonts/Montserrat_Black.ttf</string>
+    <string name="_0">0</string>
 </resources>
