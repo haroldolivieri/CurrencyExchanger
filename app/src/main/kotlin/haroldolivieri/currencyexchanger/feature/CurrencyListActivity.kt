@@ -4,7 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import dagger.android.support.DaggerAppCompatActivity
 
 import haroldolivieri.currencyexchanger.R
@@ -65,6 +68,17 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         currencyList.addItemDecoration(dividerItemDecoration)
         currencyList.layoutManager = linearLayoutManager
         currencyList.adapter = currencyAdapter
+        currencyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                focusThief.requestFocus()
+                val view = findViewById<View>(android.R.id.content)
+                if (view != null) {
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+
+            }
+        })
     }
 
 }

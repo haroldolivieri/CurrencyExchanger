@@ -58,8 +58,12 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     override fun onViewRecycled(holder: CurrencyHolder) {
         super.onViewRecycled(holder)
-        holder.stopEmittingItems()
-        holder.stopObservingItems()
+        holder.dispose()
+    }
+
+    override fun onViewDetachedFromWindow(holder: CurrencyHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.dispose()
     }
 
     override fun getItemCount(): Int = adapterList?.size ?: 0
@@ -90,11 +94,6 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     startEmittingItems(rate)
                 } else {
                     stopEmittingItems()
-                    startObservingItems(currencyItem, rate)
-                    (itemView.context.getSystemService(Context.INPUT_METHOD_SERVICE)
-                            as InputMethodManager)
-                            .hideSoftInputFromInputMethod(amountInput.windowToken,
-                                    InputMethodManager.SHOW_FORCED)
                 }
             }
 
@@ -110,13 +109,18 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             startObservingItems(currencyItem, rate)
         }
 
-        fun stopObservingItems() {
+        fun dispose() {
+            stopEmittingItems()
+            stopObservingItems()
+        }
+
+        private fun stopObservingItems() {
             if (amountChangesDisposable != null && !amountChangesDisposable?.isDisposed!!) {
                 amountChangesDisposable?.dispose()
             }
         }
 
-        fun stopEmittingItems() {
+        private fun stopEmittingItems() {
             if (textChangesDisposable != null && !textChangesDisposable?.isDisposed!!) {
                 textChangesDisposable?.dispose()
             }
@@ -160,9 +164,10 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             amountInput.requestFocus()
             itemSelected(currencyItem)
             itemClick.invoke(currencyItem.currency)
+
             (itemView.context.getSystemService(Context.INPUT_METHOD_SERVICE)
                     as InputMethodManager)
-                    .showSoftInput(amountInput, InputMethodManager.SHOW_FORCED)
+                    .showSoftInput(amountInput, InputMethodManager.SHOW_IMPLICIT)
         }
 
         private fun itemSelected(currencyItem: CurrencyItem) {

@@ -15,6 +15,5 @@ object CurrencyListContract {
     interface Presenter {
         fun onCreate()
         fun onDestroy()
-        fun changeBaseCurrency(currency: Currency)
     }
 }

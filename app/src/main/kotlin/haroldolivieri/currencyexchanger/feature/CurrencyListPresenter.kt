@@ -16,7 +16,6 @@ class CurrencyListPresenter
         CurrencyListContract.Presenter {
 
     private val worker = Schedulers.io().createWorker()
-    private var selectedBaseCurrency = Currency.EUR
 
     override fun onCreate() {
         fetchRates()
@@ -26,13 +25,10 @@ class CurrencyListPresenter
         worker.dispose()
     }
 
-    override fun changeBaseCurrency(currency: Currency) {
-        selectedBaseCurrency = currency
-    }
 
-    private fun fetchRates(currency : Currency = selectedBaseCurrency) {
+    private fun fetchRates() {
         worker.schedulePeriodically({
-            currencyRatingService.getRatesByCurrencyBase(currency.name)
+            currencyRatingService.getRatesByCurrencyBase(Currency.EUR.name)
                     .toObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { rate ->
