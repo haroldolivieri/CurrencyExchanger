@@ -1,6 +1,7 @@
 package haroldolivieri.currencyexchanger.domain
 
-data class CurrencyItem(val currency: Currency, val rate: Float = 0F, var rateMultiplier: Float = 0F) {
+data class CurrencyItem(val currency: Currency,
+                        val rate: Float = 0F) {
     override fun equals(other: Any?): Boolean {
         if (other is CurrencyItem) {
             return this.currency == other.currency

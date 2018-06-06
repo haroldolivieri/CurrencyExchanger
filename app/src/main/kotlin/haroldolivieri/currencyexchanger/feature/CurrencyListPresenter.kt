@@ -45,7 +45,7 @@ class CurrencyListPresenter
                     }, {t ->
                         view.showError(t.message)
                     })
-        }, 0, 10, TimeUnit.SECONDS)
+        }, 0, 1, TimeUnit.SECONDS)
     }
 
 }

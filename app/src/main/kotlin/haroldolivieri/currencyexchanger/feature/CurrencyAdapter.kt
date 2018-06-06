@@ -135,8 +135,6 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                             amountInput.setText("")
                             return@subscribe
                         }
-
-                        currencyItem.rateMultiplier = amountInBaseCurrency
                         amountInput.setText("%.2f".format(amountInBaseCurrency * rate))
                     }
         }

@@ -1,0 +1,35 @@
+<resources>
+    <string name="aud_currency_name">Dólar Australiano</string>
+    <string name="bgn_currency_name">Lev Búlgaro</string>
+    <string name="brl_currency_name">Real Brasileiro</string>
+    <string name="cad_currency_name">Dólar Canadense</string>
+    <string name="chf_currency_name">Franco Súiço</string>
+    <string name="cny_currency_name">Yuan Chinês</string>
+    <string name="czk_currency_name">Coroa Tcheca</string>
+    <string name="dkk_currency_name">Coroa Dinamarquesa</string>
+    <string name="eur_currency_name">Euro</string>
+    <string name="gbp_currency_name">Libra Esterlina</string>
+    <string name="hkd_currency_name">Dólar de Hong Kong</string>
+    <string name="hrk_currency_name">Kuna Croata</string>
+    <string name="huf_currency_name">Forint Hungáro</string>
+    <string name="idr_currency_name">Rúpia da Indonésia</string>
+    <string name="ils_currency_name">Shekel Isrealita</string>
+    <string name="inr_currency_name">Rúpia Indiana</string>
+    <string name="isk_currency_name">Coroa Islandesa</string>
+    <string name="jpy_currency_name">Yen Japonês</string>
+    <string name="krw_currency_name">Won Sul-Coreano</string>
+    <string name="mxn_currency_name">Pesos Mexicanos</string>
+    <string name="myr_currency_name">Ringgit da Malásia</string>
+    <string name="nok_currency_name">Coroa Norueguesa</string>
+    <string name="nzd_currency_name">Dólar Neozelandês</string>
+    <string name="php_currency_name">Peso Filipino</string>
+    <string name="pln_currency_name">Zloty Polonês</string>
+    <string name="ron_currency_name">Leu Romeno</string>
+    <string name="rub_currency_name">Rublo Russo</string>
+    <string name="sek_currency_name">Coroa Sueca</string>
+    <string name="sgd_currency_name">Dólar Cingapura</string>
+    <string name="thb_currency_name">Baht Tailandês</string>
+    <string name="try_currency_name">Lira Turca</string>
+    <string name="usd_currency_name">Dólar Americano</string>
+    <string name="zar_currency_name">Rande Sul-Africano</string>
+</resources>
