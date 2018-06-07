@@ -98,6 +98,14 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             currencyName.text = currency.name
             currencyDescription.setText(currency.currencyName())
 
+            stopEmittingTextChanges()
+            val amount = multiplier * rate
+            if (amount > 0F) {
+                amountInput.setText("%.2f".format(amount))
+            } else {
+                amountInput.setText("")
+            }
+
             when (selectedCurrency) {
                 currency -> {
                     amountInput.requestFocus()
@@ -106,13 +114,6 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 }
                 else -> {
                     stopEmittingTextChanges()
-
-                    val amount = multiplier * rate
-                    if (amount > 0F) {
-                        amountInput.setText("%.2f".format(amount))
-                    } else {
-                        amountInput.setText("")
-                    }
                 }
             }
 
@@ -134,7 +135,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             stopEmittingTextChanges()
             textChangesDisposable = RxTextView.textChanges(input)
                     .subscribe {
-                        if (it.isEmpty()) {
+                        if (it.isEmpty() || it.toString().toFloat() == 0F) {
+                            multiplier = 0F
                             return@subscribe
                         }
 
