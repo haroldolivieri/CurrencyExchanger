@@ -2,6 +2,7 @@ package haroldolivieri.currencyexchanger.feature
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
@@ -21,7 +22,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val itemClick: () -> Unit) :
@@ -31,8 +31,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         private val TAG = CurrencyAdapter::class.java.simpleName
     }
 
-    private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
     private var selectedCurrency: Currency? = null
+    private var multiplier = 0F
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyHolder {
         val view = LayoutInflater.from(parent.context)
@@ -86,98 +86,83 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 .findViewById<EditText>(R.id.amountInput)
 
         private var textChangesDisposable: Disposable? = null
-        private var amountChangesDisposable: Disposable? = null
         private var disposables: CompositeDisposable = CompositeDisposable()
 
         @SuppressLint("ClickableViewAccessibility")
         fun bind(currencyItem: CurrencyItem) {
+
             val currency = currencyItem.currency
             val rate = currencyItem.rate
-
-            stopEmittingItems()
-
-            when (selectedCurrency) {
-                currency -> {
-                    amountInput.requestFocus()
-                    amountInput.setSelection(amountInput.text.length)
-                    stopObservingItems()
-                    startEmittingItems(rate)
-                }
-                else -> startObservingItems(rate)
-            }
 
             currencyImage.setImageResource(currency.currencyImage())
             currencyName.text = currency.name
             currencyDescription.setText(currency.currencyName())
 
+            when (selectedCurrency) {
+                currency -> {
+                    amountInput.requestFocus()
+                    amountInput.setSelection(amountInput.text.length)
+                    startEmittingTextChanges(currencyItem, amountInput)
+                }
+                else -> {
+                    stopEmittingTextChanges()
+
+                    val amount = multiplier * rate
+                    if (amount > 0F) {
+                        amountInput.setText("%.2f".format(amount))
+                    } else {
+                        amountInput.setText("")
+                    }
+                }
+            }
+
             disposables.add(Observable.merge(RxView.touches(amountInput), RxView.clicks(itemView))
                     .toFlowable(BackpressureStrategy.LATEST)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        onCurrencySelected(currencyItem)
+                        itemSelected()
                     })
         }
 
         fun dispose() {
-            stopEmittingItems()
-            stopObservingItems()
+            stopEmittingTextChanges()
             disposables.clear()
         }
 
-        private fun startObservingItems(rate: Float) {
-            stopObservingItems()
-
-            amountChangesDisposable = subject
-                    .toFlowable(BackpressureStrategy.LATEST)
-                    .subscribe { amountInBaseCurrency ->
-                        if (amountInBaseCurrency == 0F) {
-                            amountInput.setText("")
-                            return@subscribe
-                        }
-                        amountInput.setText("%.2f".format(amountInBaseCurrency * rate))
-                    }
-        }
-
-        private fun startEmittingItems(rate: Float) {
-            stopEmittingItems()
-            textChangesDisposable = RxTextView.textChanges(amountInput)
+        private fun startEmittingTextChanges(currencyItem: CurrencyItem,
+                                             input : EditText) {
+            stopEmittingTextChanges()
+            textChangesDisposable = RxTextView.textChanges(input)
                     .subscribe {
-
                         if (it.isEmpty()) {
-                            subject.onNext(0F)
                             return@subscribe
                         }
+
+                        Log.e(TAG, "${currencyItem.currency} || $selectedCurrency => " +
+                                "$it/ ${currencyItem.rate} = " +
+                                "${it.toString().toFloat()/currencyItem.rate}")
 
                         val typedAmount = it.toString().toFloat()
-                        val amountInBaseCurrency = typedAmount / rate
-                        subject.onNext(amountInBaseCurrency)
+                        val amountInBaseCurrency = typedAmount / currencyItem.rate
+                        multiplier = amountInBaseCurrency
                     }
         }
 
-        private fun onCurrencySelected(currencyItem: CurrencyItem) {
-            itemSelected(currencyItem)
+        private fun itemSelected() {
+            layoutPosition.also { currentPosition ->
+                selectedCurrency = adapterList?.get(currentPosition)?.currency
+//                adapterList?.removeAt(currentPosition).also {
+//                    adapterList?.add(0, it!!)
+//                }
+//                notifyItemMoved(currentPosition, 0)
+//                itemClick.invoke()
+            }
+
             amountInput.requestFocus()
             KeyboardUtils.showKeyboard(amountInput)
         }
 
-        private fun itemSelected(currencyItem: CurrencyItem) {
-            layoutPosition.also { currentPosition ->
-                selectedCurrency = currencyItem.currency
-                adapterList?.removeAt(currentPosition).also {
-                    adapterList?.add(0, it!!)
-                }
-                notifyItemMoved(currentPosition, 0)
-                itemClick.invoke()
-            }
-        }
-
-        private fun stopObservingItems() {
-            if (amountChangesDisposable != null && !amountChangesDisposable?.isDisposed!!) {
-                amountChangesDisposable?.dispose()
-            }
-        }
-
-        private fun stopEmittingItems() {
+        private fun stopEmittingTextChanges() {
             if (textChangesDisposable != null && !textChangesDisposable?.isDisposed!!) {
                 textChangesDisposable?.dispose()
             }
