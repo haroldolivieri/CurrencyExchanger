@@ -6,4 +6,4 @@ import java.util.Date
 
 data class Rate (@SerializedName("base") val currencyBase : Currency,
                  val date: Date,
-                 val rates : LinkedHashMap<Currency, Float>)
+                 val rates : HashMap<Currency, Float>)

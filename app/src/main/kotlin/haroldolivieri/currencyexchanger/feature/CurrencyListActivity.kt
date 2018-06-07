@@ -1,5 +1,6 @@
 package haroldolivieri.currencyexchanger.feature
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
@@ -17,6 +18,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.util.*
 import javax.inject.Inject
 import haroldolivieri.currencyexchanger.view.KeyboardUtils
+import android.support.v4.content.ContextCompat
+import android.os.Build
+import android.support.v4.view.ViewCompat
+import android.view.WindowManager
+
+
+
 
 class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.View {
 
@@ -46,6 +54,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
                         if (!isVisible) currencyAdapter.resetSelectedCurrency()
                     }
                 })
+
+        setActionBarGradient()
     }
 
     override fun onDestroy() {
@@ -68,6 +78,17 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
     override fun showError(message: String?) {
         Log.e(TAG, "$message")
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun setActionBarGradient() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
+
+        appBarLayout.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                R.drawable.revolut_gradient))
     }
 
     private fun setupRecyclerView() {
