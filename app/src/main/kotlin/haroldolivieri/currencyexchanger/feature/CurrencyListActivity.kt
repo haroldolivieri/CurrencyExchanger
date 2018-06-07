@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import dagger.android.support.DaggerAppCompatActivity
 
 import haroldolivieri.currencyexchanger.R
@@ -17,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.util.*
 import javax.inject.Inject
+import haroldolivieri.currencyexchanger.view.KeyboardUtils
 
 class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.View {
 
@@ -24,7 +24,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         private val TAG = CurrencyListActivity::class.java.simpleName
     }
 
-    @Inject lateinit var currencyPresenter : CurrencyListContract.Presenter
+    @Inject
+    lateinit var currencyPresenter: CurrencyListContract.Presenter
 
     private val currencyAdapter by lazy {
         CurrencyAdapter(itemClick = {
@@ -38,12 +39,21 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
         setupRecyclerView()
         currencyPresenter.onCreate()
+
+        KeyboardUtils.addKeyboardToggleListener(this@CurrencyListActivity,
+                object : KeyboardUtils.SoftKeyboardToggleListener {
+                    override fun onToggleSoftKeyboard(isVisible: Boolean) {
+                        if (!isVisible) currencyAdapter.resetSelectedCurrency()
+                    }
+                })
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        KeyboardUtils.removeAllKeyboardToggleListeners()
         currencyPresenter.onDestroy()
     }
+
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
@@ -71,14 +81,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         currencyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 focusThief.requestFocus()
-                val view = findViewById<View>(android.R.id.content)
-                if (view != null) {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(view.windowToken, 0)
-                }
-
+                KeyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
             }
         })
     }
-
 }

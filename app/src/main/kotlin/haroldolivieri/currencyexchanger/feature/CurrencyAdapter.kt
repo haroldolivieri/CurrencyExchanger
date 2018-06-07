@@ -1,41 +1,47 @@
 package haroldolivieri.currencyexchanger.feature
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
+import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import haroldolivieri.currencyexchanger.view.currencyImage
 import haroldolivieri.currencyexchanger.view.currencyName
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
-                      private val itemClick: (currency: Currency) -> Unit) :
+                      private val itemClick: () -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
     companion object {
         private val TAG = CurrencyAdapter::class.java.simpleName
     }
 
-    private val subject : BehaviorSubject<Float> = BehaviorSubject.create()
-    private var selectedCurrency : Currency? = null
+    private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
+    private var selectedCurrency: Currency? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_currency, parent, false)
         return CurrencyHolder(view)
+    }
+
+    fun resetSelectedCurrency() {
+        selectedCurrency = null
     }
 
     fun setRates(rates: List<CurrencyItem>) {
@@ -46,14 +52,14 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             newCurrencyItem?.let { sortedRatesList.add(index, it) }
         }
 
-        this.adapterList =  if (!sortedRatesList.isEmpty()) sortedRatesList
+        this.adapterList = if (!sortedRatesList.isEmpty()) sortedRatesList
         else rates.toMutableList()
 
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: CurrencyHolder, position: Int) {
-        adapterList?.get(position)?.let { holder.bind(it, itemClick)}
+        adapterList?.get(position)?.let { holder.bind(it) }
     }
 
     override fun onViewRecycled(holder: CurrencyHolder) {
@@ -70,71 +76,60 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     inner class CurrencyHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val currencyImage = itemView.findViewById<ImageView>(R.id.currencyImage)
-        private val currencyName = itemView.findViewById<TextView>(R.id.currencyName)
-        private val currencyDescription = itemView.findViewById<TextView>(R.id.currencyDescription)
-        private val amountInput = itemView.findViewById<EditText>(R.id.amountInput)
+        private val currencyImage = itemView
+                .findViewById<ImageView>(R.id.currencyImage)
+        private val currencyName = itemView
+                .findViewById<TextView>(R.id.currencyName)
+        private val currencyDescription = itemView
+                .findViewById<TextView>(R.id.currencyDescription)
+        private val amountInput = itemView
+                .findViewById<EditText>(R.id.amountInput)
 
-        private var textChangesDisposable : Disposable? = null
-        private var amountChangesDisposable : Disposable? = null
-
+        private var textChangesDisposable: Disposable? = null
+        private var amountChangesDisposable: Disposable? = null
+        private var disposables: CompositeDisposable = CompositeDisposable()
 
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(currencyItem: CurrencyItem, itemClick: (currency: Currency) -> Unit) {
+        fun bind(currencyItem: CurrencyItem) {
             val currency = currencyItem.currency
             val rate = currencyItem.rate
+
+            stopEmittingItems()
+
+            when (selectedCurrency) {
+                currency -> {
+                    amountInput.requestFocus()
+                    amountInput.setSelection(amountInput.text.length)
+                    stopObservingItems()
+                    startEmittingItems(rate)
+                }
+                else -> startObservingItems(rate)
+            }
 
             currencyImage.setImageResource(currency.currencyImage())
             currencyName.text = currency.name
             currencyDescription.setText(currency.currencyName())
 
-            amountInput.setOnFocusChangeListener { _, focused ->
-                if (focused) {
-                    stopObservingItems()
-                    startEmittingItems(rate)
-                } else {
-                    stopEmittingItems()
-                }
-            }
-
-            amountInput.setOnTouchListener { _, _ ->
-                onCurrencySelected(currencyItem, itemClick)
-                true
-            }
-
-            itemView.setOnClickListener {
-                onCurrencySelected(currencyItem, itemClick)
-            }
-
-            startObservingItems(currencyItem, rate)
+            disposables.add(Observable.merge(RxView.touches(amountInput), RxView.clicks(itemView))
+                    .toFlowable(BackpressureStrategy.LATEST)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        onCurrencySelected(currencyItem)
+                    })
         }
 
         fun dispose() {
             stopEmittingItems()
             stopObservingItems()
+            disposables.clear()
         }
 
-        private fun stopObservingItems() {
-            if (amountChangesDisposable != null && !amountChangesDisposable?.isDisposed!!) {
-                amountChangesDisposable?.dispose()
-            }
-        }
-
-        private fun stopEmittingItems() {
-            if (textChangesDisposable != null && !textChangesDisposable?.isDisposed!!) {
-                textChangesDisposable?.dispose()
-            }
-        }
-
-        private fun startObservingItems(currencyItem: CurrencyItem, rate: Float) {
+        private fun startObservingItems(rate: Float) {
             stopObservingItems()
 
             amountChangesDisposable = subject
                     .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe { amountInBaseCurrency ->
-                        Log.i(TAG, "${currencyItem.currency.name} -> " +
-                                "$rate * $amountInBaseCurrency = ${amountInBaseCurrency * rate}")
-
                         if (amountInBaseCurrency == 0F) {
                             amountInput.setText("")
                             return@subscribe
@@ -159,15 +154,10 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     }
         }
 
-        private fun onCurrencySelected(currencyItem: CurrencyItem,
-                                       itemClick: (currency: Currency) -> Unit) {
-            amountInput.requestFocus()
+        private fun onCurrencySelected(currencyItem: CurrencyItem) {
             itemSelected(currencyItem)
-            itemClick.invoke(currencyItem.currency)
-
-            (itemView.context.getSystemService(Context.INPUT_METHOD_SERVICE)
-                    as InputMethodManager)
-                    .showSoftInput(amountInput, InputMethodManager.SHOW_IMPLICIT)
+            amountInput.requestFocus()
+            KeyboardUtils.showKeyboard(amountInput)
         }
 
         private fun itemSelected(currencyItem: CurrencyItem) {
@@ -177,6 +167,19 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     adapterList?.add(0, it!!)
                 }
                 notifyItemMoved(currentPosition, 0)
+                itemClick.invoke()
+            }
+        }
+
+        private fun stopObservingItems() {
+            if (amountChangesDisposable != null && !amountChangesDisposable?.isDisposed!!) {
+                amountChangesDisposable?.dispose()
+            }
+        }
+
+        private fun stopEmittingItems() {
+            if (textChangesDisposable != null && !textChangesDisposable?.isDisposed!!) {
+                textChangesDisposable?.dispose()
             }
         }
     }

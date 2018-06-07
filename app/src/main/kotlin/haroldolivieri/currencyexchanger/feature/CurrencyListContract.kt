@@ -4,7 +4,6 @@ import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import java.util.*
 
-
 object CurrencyListContract {
     interface View {
         fun showCurrencyList(rates: List<CurrencyItem>)
