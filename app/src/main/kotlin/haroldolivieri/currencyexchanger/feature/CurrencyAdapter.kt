@@ -74,6 +74,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     override fun getItemCount(): Int = adapterList?.size ?: 0
 
+    private var inputtedAmount: String = ""
+
     inner class CurrencyHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val currencyImage = itemView
@@ -94,16 +96,18 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             val currency = currencyItem.currency
             val rate = currencyItem.rate
 
-            stopEmittingItems()
-
             when (selectedCurrency) {
                 currency -> {
                     amountInput.requestFocus()
+                    amountInput.setText(inputtedAmount)
                     amountInput.setSelection(amountInput.text.length)
                     stopObservingItems()
                     startEmittingItems(rate)
                 }
-                else -> startObservingItems(rate)
+                else -> {
+                    startObservingItems(rate)
+                    stopEmittingItems()
+                }
             }
 
             currencyImage.setImageResource(currency.currencyImage())
@@ -114,7 +118,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     .toFlowable(BackpressureStrategy.LATEST)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        onCurrencySelected(currencyItem)
+                        onCurrencySelected()
                     })
         }
 
@@ -141,28 +145,31 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         private fun startEmittingItems(rate: Float) {
             stopEmittingItems()
             textChangesDisposable = RxTextView.textChanges(amountInput)
+                    .toFlowable(BackpressureStrategy.DROP)
                     .subscribe {
 
-                        if (it.isEmpty()) {
+                        if (it.isEmpty() || it.toString().toFloat() == 0F) {
                             subject.onNext(0F)
+                            inputtedAmount = ""
                             return@subscribe
                         }
 
-                        val typedAmount = it.toString().toFloat()
-                        val amountInBaseCurrency = typedAmount / rate
+                        inputtedAmount = it.toString()
+                        val amountInBaseCurrency = inputtedAmount.toFloat() / rate
                         subject.onNext(amountInBaseCurrency)
                     }
         }
 
-        private fun onCurrencySelected(currencyItem: CurrencyItem) {
-            itemSelected(currencyItem)
+        private fun onCurrencySelected() {
+            itemSelected()
             amountInput.requestFocus()
             KeyboardUtils.showKeyboard(amountInput)
         }
 
-        private fun itemSelected(currencyItem: CurrencyItem) {
+        private fun itemSelected() {
             layoutPosition.also { currentPosition ->
-                selectedCurrency = currencyItem.currency
+                selectedCurrency = adapterList?.get(currentPosition)?.currency
+                inputtedAmount = amountInput.text.toString()
                 adapterList?.removeAt(currentPosition).also {
                     adapterList?.add(0, it!!)
                 }
