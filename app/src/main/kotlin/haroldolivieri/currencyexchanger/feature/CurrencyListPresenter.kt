@@ -35,10 +35,14 @@ class CurrencyListPresenter
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { rate ->
                         view.showRateInfo(rate.date, rate.currencyBase)
-                        Observable
-                                .fromArray(rate.rates.map { CurrencyItem(it.key, it.value) }
-                                        as MutableList<CurrencyItem>)
+                        val items = rate.rates.map { CurrencyItem(it.key, it.value) }
+                                as MutableList<CurrencyItem>
+                        items.add(CurrencyItem(Currency.EUR, 1F))
+                        Observable.fromIterable(items)
                     }
+                    .toSortedList({ c1, c2 ->
+                        c1.currency.name.compareTo(c2.currency.name)
+                    })
                     .subscribe({ items ->
                         view.showCurrencyList(items)
                     }, { t ->

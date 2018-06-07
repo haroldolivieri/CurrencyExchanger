@@ -161,12 +161,13 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         }
 
         private fun onCurrencySelected() {
-            itemSelected()
+            selectedItemToTop()
             amountInput.requestFocus()
+            amountInput.setSelection(amountInput.text.length)
             KeyboardUtils.showKeyboard(amountInput)
         }
 
-        private fun itemSelected() {
+        private fun selectedItemToTop() {
             layoutPosition.also { currentPosition ->
                 selectedCurrency = adapterList?.get(currentPosition)?.currency
                 inputtedAmount = amountInput.text.toString()
