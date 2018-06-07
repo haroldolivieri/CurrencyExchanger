@@ -74,6 +74,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     override fun getItemCount(): Int = adapterList?.size ?: 0
 
+    private var inputedAmount: String = ""
+
     inner class CurrencyHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val currencyImage = itemView
@@ -99,21 +101,21 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             currencyDescription.setText(currency.currencyName())
 
             stopEmittingTextChanges()
-            val amount = multiplier * rate
-            if (amount > 0F) {
-                amountInput.setText("%.2f".format(amount))
-            } else {
-                amountInput.setText("")
-            }
 
             when (selectedCurrency) {
                 currency -> {
                     amountInput.requestFocus()
+                    amountInput.setText(inputedAmount)
                     amountInput.setSelection(amountInput.text.length)
                     startEmittingTextChanges(currencyItem, amountInput)
                 }
                 else -> {
-                    stopEmittingTextChanges()
+                    val amount = multiplier * rate
+                    if (amount > 0F) {
+                        amountInput.setText("%.0f".format(amount))
+                    } else {
+                        amountInput.setText("")
+                    }
                 }
             }
 
@@ -134,25 +136,29 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                                              input : EditText) {
             stopEmittingTextChanges()
             textChangesDisposable = RxTextView.textChanges(input)
+                    .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe {
                         if (it.isEmpty() || it.toString().toFloat() == 0F) {
+                            inputedAmount = ""
                             multiplier = 0F
                             return@subscribe
                         }
 
+                        inputedAmount = it.toString()
                         Log.e(TAG, "${currencyItem.currency} || $selectedCurrency => " +
-                                "$it/ ${currencyItem.rate} = " +
-                                "${it.toString().toFloat()/currencyItem.rate}")
+                                "$inputedAmount/ ${currencyItem.rate} = " +
+                                "${inputedAmount.toFloat()/currencyItem.rate}")
 
-                        val typedAmount = it.toString().toFloat()
-                        val amountInBaseCurrency = typedAmount / currencyItem.rate
+                        val amountInBaseCurrency = inputedAmount.toFloat() / currencyItem.rate
                         multiplier = amountInBaseCurrency
+                        notifyDataSetChanged()
                     }
         }
 
         private fun itemSelected() {
             layoutPosition.also { currentPosition ->
                 selectedCurrency = adapterList?.get(currentPosition)?.currency
+                inputedAmount = amountInput.text.toString()
 //                adapterList?.removeAt(currentPosition).also {
 //                    adapterList?.add(0, it!!)
 //                }
