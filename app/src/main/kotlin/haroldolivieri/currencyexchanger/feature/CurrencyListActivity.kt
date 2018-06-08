@@ -87,6 +87,16 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
                     WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
 
+        appBarLayout.addOnOffsetChangedListener { _, verticalOffSet ->
+            if (Math.abs(verticalOffSet) == appBarLayout.totalScrollRange) {
+                toolBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                        R.drawable.last_revolut_gradient))
+            } else {
+                toolBar.setBackgroundColor(ContextCompat.getColor(this,
+                        android.R.color.transparent))
+            }
+        }
+
         appBarLayout.setBackgroundDrawable(ContextCompat.getDrawable(this,
                 R.drawable.revolut_gradient))
     }
