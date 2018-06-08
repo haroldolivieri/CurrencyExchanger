@@ -38,6 +38,7 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     private val currencyAdapter by lazy {
         CurrencyAdapter(itemClick = {
             currencyList.scrollToPosition(0)
+            currencyList.adapter.notifyDataSetChanged()
         })
     }
 

@@ -22,6 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.logging.Handler
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val itemClick: () -> Unit) :
@@ -175,7 +176,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     adapterList?.add(0, it!!)
                 }
                 notifyItemMoved(currentPosition, 0)
-                itemClick.invoke()
+                android.os.Handler().postDelayed({itemClick.invoke()}, 300)
+
             }
         }
 
