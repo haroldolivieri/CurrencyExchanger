@@ -1,10 +1,9 @@
-package haroldolivieri.currencyexchanger.di
+package haroldolivieri.currencyexchanger.repository.remote
 
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import haroldolivieri.currencyexchanger.BuildConfig
-import haroldolivieri.currencyexchanger.remote.CurrencyRatingService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -46,12 +45,12 @@ class RemoteModule {
     }
 
     @Provides
-    fun provideRetrofit(gsonConverterFactory: GsonConverterFactory,
+    fun provideRetrofit(jsonConverterFactory: GsonConverterFactory,
                         okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .baseUrl(BuildConfig.HOST)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(gsonConverterFactory)
+                .addConverterFactory(jsonConverterFactory)
                 .client(okHttpClient)
                 .build()
     }

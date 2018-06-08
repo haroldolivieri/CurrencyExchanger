@@ -23,9 +23,6 @@ import android.support.v4.content.ContextCompat
 import android.os.Build
 import android.view.WindowManager
 
-
-
-
 class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.View {
 
     companion object {
@@ -36,7 +33,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     lateinit var currencyPresenter: CurrencyListContract.Presenter
 
     private val currencyAdapter by lazy {
-        CurrencyAdapter(itemClick = {
+        CurrencyAdapter(itemClick = { newCurrencyOrder ->
+            currencyPresenter.saveNewOrder(newCurrencyOrder)
             currencyList.scrollToPosition(0)
             currencyList.adapter.notifyDataSetChanged()
         })

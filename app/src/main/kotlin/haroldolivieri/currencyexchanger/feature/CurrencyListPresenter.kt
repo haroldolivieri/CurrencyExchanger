@@ -1,20 +1,21 @@
 package haroldolivieri.currencyexchanger.feature
 
 import haroldolivieri.currencyexchanger.domain.Currency
-import haroldolivieri.currencyexchanger.domain.CurrencyItem
-import haroldolivieri.currencyexchanger.remote.CurrencyRatingService
-import io.reactivex.Observable
+import haroldolivieri.currencyexchanger.repository.CurrencyRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
 class CurrencyListPresenter
 @Inject constructor(private val view: CurrencyListContract.View,
-                    private val currencyRatingService: CurrencyRatingService) :
+                    private val currencyRepository: CurrencyRepository) :
         CurrencyListContract.Presenter {
+
+    override fun saveNewOrder(newCurrencyOrder: List<Currency>) {
+        currencyRepository.saveNewOrder(newCurrencyOrder)
+    }
 
     private val worker = Schedulers.io().createWorker()
     private val disposable = CompositeDisposable()
@@ -30,19 +31,8 @@ class CurrencyListPresenter
 
     private fun fetchRates() {
         worker.schedulePeriodically({
-            disposable.add(currencyRatingService.getRatesByCurrencyBase(Currency.EUR.name)
-                    .toObservable()
+            disposable.add(currencyRepository.fetchOrderedCurrencies()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap { rate ->
-                        view.showRateInfo(rate.date, rate.currencyBase)
-                        val items = rate.rates.map { CurrencyItem(it.key, it.value) }
-                                as MutableList<CurrencyItem>
-                        items.add(CurrencyItem(Currency.EUR, 1F))
-                        Observable.fromIterable(items)
-                    }
-                    .toSortedList({ c1, c2 ->
-                        c1.currency.name.compareTo(c2.currency.name)
-                    })
                     .subscribe({ items ->
                         view.showCurrencyList(items)
                     }, { t ->
@@ -50,5 +40,4 @@ class CurrencyListPresenter
                     }))
         }, 0, 1, TimeUnit.SECONDS)
     }
-
 }

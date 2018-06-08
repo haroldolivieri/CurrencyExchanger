@@ -22,15 +22,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
-import java.util.logging.Handler
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
-                      private val itemClick: () -> Unit) :
+                      private val itemClick: (List<Currency>) -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
-
-    companion object {
-        private val TAG = CurrencyAdapter::class.java.simpleName
-    }
 
     private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
     private var selectedCurrency: Currency? = null
@@ -46,16 +41,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
     }
 
     fun setRates(rates: List<CurrencyItem>) {
-        val sortedRatesList = mutableListOf<CurrencyItem>()
-
-        this.adapterList?.forEachIndexed { index, oldCurrencyItem ->
-            val newCurrencyItem = rates.find { oldCurrencyItem.currency == it.currency }
-            newCurrencyItem?.let { sortedRatesList.add(index, it) }
-        }
-
-        this.adapterList = if (!sortedRatesList.isEmpty()) sortedRatesList
-        else rates.toMutableList()
-
+        this.adapterList = rates.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -169,15 +155,15 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         }
 
         private fun selectedItemToTop() {
+            var orderedList = emptyList<Currency>()
             layoutPosition.also { currentPosition ->
                 selectedCurrency = adapterList?.get(currentPosition)?.currency
                 inputtedAmount = amountInput.text.toString()
                 adapterList?.removeAt(currentPosition).also {
                     adapterList?.add(0, it!!)
+                    orderedList = adapterList?.map { it.currency }!!
                 }
-                notifyItemMoved(currentPosition, 0)
-                android.os.Handler().postDelayed({itemClick.invoke()}, 300)
-
+                itemClick.invoke(orderedList)
             }
         }
 

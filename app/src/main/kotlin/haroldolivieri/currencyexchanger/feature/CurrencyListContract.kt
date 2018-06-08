@@ -14,5 +14,6 @@ object CurrencyListContract {
     interface Presenter {
         fun onCreate()
         fun onDestroy()
+        fun saveNewOrder(newCurrencyOrder: List<Currency>)
     }
 }
