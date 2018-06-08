@@ -21,7 +21,6 @@ import javax.inject.Inject
 import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import android.support.v4.content.ContextCompat
 import android.os.Build
-import android.support.v4.view.ViewCompat
 import android.view.WindowManager
 
 
@@ -46,17 +45,12 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setupRecyclerView()
         currencyPresenter.onCreate()
 
-        KeyboardUtils.addKeyboardToggleListener(this@CurrencyListActivity,
-                object : KeyboardUtils.SoftKeyboardToggleListener {
-                    override fun onToggleSoftKeyboard(isVisible: Boolean) {
-                        if (!isVisible) currencyAdapter.resetSelectedCurrency()
-                    }
-                })
-
-        setActionBarGradient()
+        setupRecyclerView()
+        setupFullscreenMode()
+        setupKeyboardBehavior()
+        setupCollapseToolbarBehavior()
     }
 
     override fun onDestroy() {
@@ -81,32 +75,9 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         Log.e(TAG, "$message")
     }
 
-    @SuppressLint("ObsoleteSdkInt")
-    private fun setActionBarGradient() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        }
-
-        appBarLayout.addOnOffsetChangedListener { _, verticalOffSet ->
-            if (Math.abs(verticalOffSet) == appBarLayout.totalScrollRange) {
-                //Collapsed
-                toolBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
-                        R.drawable.last_revolut_gradient))
-            } else {
-                //Expanded
-                toolBar.setBackgroundColor(ContextCompat.getColor(this,
-                        android.R.color.transparent))
-            }
-        }
-
-        collapsingToolbar.title = getString(R.string.app_name)
-        val tf = Typeface.createFromAsset(assets, getString(R.string.font_montserrat_semi_bold));
-        collapsingToolbar.setCollapsedTitleTypeface(tf)
-        collapsingToolbar.setExpandedTitleTypeface(tf)
-
-        appBarLayout.setBackgroundDrawable(ContextCompat.getDrawable(this,
-                R.drawable.revolut_gradient))
+    private fun setupCollapseToolbarBehavior() {
+        setAppBarLayoutBehavior()
+        setToolbarTitle()
     }
 
     private fun setupRecyclerView() {
@@ -123,5 +94,44 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
                 KeyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
             }
         })
+    }
+
+    private fun setupKeyboardBehavior() {
+        KeyboardUtils.addKeyboardToggleListener(this@CurrencyListActivity,
+                object : KeyboardUtils.SoftKeyboardToggleListener {
+                    override fun onToggleSoftKeyboard(isVisible: Boolean) {
+                        if (!isVisible) currencyAdapter.resetSelectedCurrency()
+                    }
+                })
+    }
+
+    private fun setToolbarTitle() {
+        collapsingToolbar.title = getString(R.string.app_name)
+        val tf = Typeface.createFromAsset(assets, getString(R.string.font_montserrat_semi_bold))
+        collapsingToolbar.setCollapsedTitleTypeface(tf)
+        collapsingToolbar.setExpandedTitleTypeface(tf)
+    }
+
+    private fun setAppBarLayoutBehavior() {
+        appBarLayout.addOnOffsetChangedListener { _, verticalOffSet ->
+            if (Math.abs(verticalOffSet) == appBarLayout.totalScrollRange) {
+                toolBar.background = ContextCompat.getDrawable(this,
+                        R.drawable.last_revolut_gradient)
+            } else {
+                toolBar.setBackgroundColor(ContextCompat.getColor(this,
+                        android.R.color.transparent))
+            }
+        }
+
+        appBarLayout.background = ContextCompat
+                .getDrawable(this, R.drawable.revolut_gradient)
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun setupFullscreenMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
     }
 }
