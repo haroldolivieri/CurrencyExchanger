@@ -9,11 +9,13 @@ object CurrencyListContract {
         fun showCurrencyList(rates: List<CurrencyItem>)
         fun showRateInfo(date : Date, base : Currency)
         fun showError(message: String?)
+        fun updateMultiplier(multiplier: Float)
     }
 
     interface Presenter {
         fun onCreate()
         fun onDestroy()
-        fun saveNewOrder(newCurrencyOrder: List<Currency>)
+        fun saveNewMultiplier(multiplier: Float)
+        fun saveNewSortList(newCurrencyOrder: List<Currency>)
     }
 }

@@ -34,11 +34,17 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
     private val currencyAdapter by lazy {
         CurrencyAdapter(changeSavedOrder = {
-            currencyPresenter.saveNewOrder(it)
-        }, afterMoveAnimation = {
-                currencyList.scrollToPosition(0)
-                currencyList.adapter.notifyDataSetChanged()
+            currencyPresenter.saveNewSortList(it)
+        }, changeMultiplier = {
+            currencyPresenter.saveNewMultiplier(it)
+        },afterMoveAnimation = {
+            currencyList.scrollToPosition(0)
+            currencyList.adapter.notifyDataSetChanged()
         })
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,12 +66,12 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
-    }
-
     override fun showCurrencyList(rates: List<CurrencyItem>) {
         currencyAdapter.setRates(rates)
+    }
+
+    override fun updateMultiplier(multiplier: Float) {
+        currencyAdapter.setMultiplier(multiplier)
     }
 
     override fun showRateInfo(date: Date, base: Currency) {

@@ -13,20 +13,32 @@ class CurrencyListPresenter
                     private val currencyRepository: CurrencyRepository) :
         CurrencyListContract.Presenter {
 
-    override fun saveNewOrder(newCurrencyOrder: List<Currency>) {
-        currencyRepository.saveNewOrder(newCurrencyOrder)
-    }
-
     private val worker = Schedulers.io().createWorker()
     private val disposable = CompositeDisposable()
 
     override fun onCreate() {
         fetchRates()
+        fetchMultiplier()
     }
 
     override fun onDestroy() {
         worker.dispose()
         disposable.clear()
+    }
+
+    override fun saveNewSortList(newCurrencyOrder: List<Currency>) {
+        currencyRepository.saveNewSortList(newCurrencyOrder)
+    }
+
+    override fun saveNewMultiplier(multiplier: Float) {
+        currencyRepository.saveMultiplier(multiplier)
+    }
+
+    private fun fetchMultiplier() {
+        currencyRepository
+                .fetchMultiplier()
+                .subscribe({view.updateMultiplier(it)},
+                        {t -> view.showError(t.message)})
     }
 
     private fun fetchRates() {

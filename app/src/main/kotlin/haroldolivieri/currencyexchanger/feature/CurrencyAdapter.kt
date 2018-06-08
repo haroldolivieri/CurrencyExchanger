@@ -25,6 +25,7 @@ import io.reactivex.subjects.BehaviorSubject
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val changeSavedOrder: (List<Currency>) -> Unit,
+                      private val changeMultiplier: (Float) -> Unit,
                       private val afterMoveAnimation: () -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
@@ -39,6 +40,10 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     fun resetSelectedCurrency() {
         selectedCurrency = null
+    }
+
+    fun setMultiplier(multiplier : Float) {
+        subject.onNext(multiplier)
     }
 
     fun setRates(rates: List<CurrencyItem>) {
@@ -138,13 +143,15 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
                         if (it.isEmpty() || it.toString().toFloat() == 0F) {
                             subject.onNext(0F)
+                            changeMultiplier.invoke(0F)
                             inputtedAmount = ""
                             return@subscribe
                         }
 
                         inputtedAmount = it.toString()
-                        val amountInBaseCurrency = inputtedAmount.toFloat() / rate
-                        subject.onNext(amountInBaseCurrency)
+                        val multiplier = inputtedAmount.toFloat() / rate
+                        changeMultiplier.invoke(multiplier)
+                        subject.onNext(multiplier)
                     }
         }
 
