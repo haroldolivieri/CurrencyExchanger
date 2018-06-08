@@ -2,6 +2,7 @@ package haroldolivieri.currencyexchanger.feature
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -89,13 +90,20 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
         appBarLayout.addOnOffsetChangedListener { _, verticalOffSet ->
             if (Math.abs(verticalOffSet) == appBarLayout.totalScrollRange) {
+                //Collapsed
                 toolBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
                         R.drawable.last_revolut_gradient))
             } else {
+                //Expanded
                 toolBar.setBackgroundColor(ContextCompat.getColor(this,
                         android.R.color.transparent))
             }
         }
+
+        collapsingToolbar.title = getString(R.string.app_name)
+        val tf = Typeface.createFromAsset(assets, getString(R.string.font_montserrat_semi_bold));
+        collapsingToolbar.setCollapsedTitleTypeface(tf)
+        collapsingToolbar.setExpandedTitleTypeface(tf)
 
         appBarLayout.setBackgroundDrawable(ContextCompat.getDrawable(this,
                 R.drawable.revolut_gradient))

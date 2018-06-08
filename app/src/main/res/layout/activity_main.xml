@@ -23,7 +23,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="130dp"
         android:fitsSystemWindows="true"
         android:background="@color/colorAccent"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -33,12 +33,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:expandedTitleGravity="center"
             app:scrimAnimationDuration="200">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolBar"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
+                app:titleMarginStart="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
                 app:layout_collapseMode="pin" />
