@@ -33,10 +33,11 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     lateinit var currencyPresenter: CurrencyListContract.Presenter
 
     private val currencyAdapter by lazy {
-        CurrencyAdapter(itemClick = { newCurrencyOrder ->
-            currencyPresenter.saveNewOrder(newCurrencyOrder)
-            currencyList.scrollToPosition(0)
-            currencyList.adapter.notifyDataSetChanged()
+        CurrencyAdapter(changeSavedOrder = {
+            currencyPresenter.saveNewOrder(it)
+        }, afterMoveAnimation = {
+                currencyList.scrollToPosition(0)
+                currencyList.adapter.notifyDataSetChanged()
         })
     }
 
@@ -56,6 +57,7 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         super.onDestroy()
         KeyboardUtils.removeAllKeyboardToggleListeners()
         currencyPresenter.onDestroy()
+
     }
 
     override fun attachBaseContext(newBase: Context?) {
