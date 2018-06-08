@@ -90,7 +90,6 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         currencyList.adapter = currencyAdapter
         currencyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                focusThief.requestFocus()
                 KeyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
             }
         })
@@ -100,7 +99,10 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         KeyboardUtils.addKeyboardToggleListener(this@CurrencyListActivity,
                 object : KeyboardUtils.SoftKeyboardToggleListener {
                     override fun onToggleSoftKeyboard(isVisible: Boolean) {
-                        if (!isVisible) currencyAdapter.resetSelectedCurrency()
+                        if (!isVisible) {
+                            focusThief.requestFocus()
+                            currencyAdapter.resetSelectedCurrency()
+                        }
                     }
                 })
     }
