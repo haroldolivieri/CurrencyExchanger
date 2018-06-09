@@ -21,9 +21,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
-    companion object {
-        val TAG: String = this::class.java.simpleName
-    }
+    val TAG: String = this::class.java.simpleName
 
     abstract val layout: Int
     private var snackBar: Snackbar? = null
@@ -45,7 +43,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     internal fun showSnackBar(view: View, message: Int, duration: Int = Snackbar.LENGTH_LONG) {
-
         if (snackBar != null && snackBar!!.isShown) {
             return
         }

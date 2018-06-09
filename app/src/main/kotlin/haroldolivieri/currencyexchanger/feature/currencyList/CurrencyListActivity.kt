@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import haroldolivieri.currencyexchanger.feature.BaseActivity
 
 class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
@@ -63,7 +64,6 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
     }
 
     override fun showCurrencyList(rates: List<CurrencyItem>) {
-        hideSnackBar()
         currencyAdapter.setRates(rates)
     }
 
@@ -72,7 +72,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
     }
 
     override fun showError(message: String?) {
-        showSnackBar(currencyList, R.string.generic_error, Snackbar.LENGTH_INDEFINITE)
+        Log.e(TAG, "${getString(R.string.generic_error)} -> $message")
     }
 
     private fun setupCollapseToolbarBehavior() {
