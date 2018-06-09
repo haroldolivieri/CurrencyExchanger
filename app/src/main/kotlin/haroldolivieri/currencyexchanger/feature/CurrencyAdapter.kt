@@ -159,9 +159,9 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
         private fun onCurrencySelected() {
             selectedItemToTop()
-            KeyboardUtils.showKeyboard(amountInput)
             amountInput.requestFocus()
             amountInput.setSelection(amountInput.text.length)
+            KeyboardUtils.showKeyboard(amountInput)
         }
 
         private fun selectedItemToTop() {
@@ -171,8 +171,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 adapterList?.removeAt(currentPosition).also {
                     adapterList?.add(0, it!!)
                     changeSavedOrder.invoke(adapterList?.map { it.currency }!!)
+                    notifyItemMoved(currentPosition, 0)
                 }
-                notifyItemMoved(currentPosition, 0)
                 android.os.Handler().postDelayed({
                     afterMoveAnimation.invoke()
                 }, 300)
