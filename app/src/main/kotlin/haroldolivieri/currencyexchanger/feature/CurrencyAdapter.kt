@@ -32,6 +32,9 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
     private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
     private var selectedCurrency: Currency? = null
 
+    private var inputtedAmount: String = ""
+        get() { return if (field == "0") ""  else field }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_currency, parent, false)
@@ -67,8 +70,6 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
     override fun getItemCount(): Int = adapterList?.size ?: 0
 
-    private var inputtedAmount: String = ""
-
     inner class CurrencyHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val currencyImage = itemView
@@ -102,6 +103,12 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     stopEmittingItems()
                 }
             }
+
+            RxTextView.textChanges(amountInput)
+                    .toFlowable(BackpressureStrategy.DROP)
+                    .subscribe{
+
+                    }
 
             currencyImage.setImageResource(currency.currencyImage())
             currencyName.text = currency.name
@@ -138,28 +145,23 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         private fun startEmittingItems(rate: Float) {
             stopEmittingItems()
             textChangesDisposable = RxTextView.textChanges(amountInput)
+                    .map { if (it.isEmpty()) "0" else it}
                     .toFlowable(BackpressureStrategy.DROP)
                     .subscribe {
+                        val typedAmount = it.toString()
+                        val multiplier = typedAmount.toFloat() / rate
 
-                        if (it.isEmpty() || it.toString().toFloat() == 0F) {
-                            subject.onNext(0F)
-                            changeMultiplier.invoke(0F)
-                            inputtedAmount = ""
-                            return@subscribe
-                        }
-
-                        inputtedAmount = it.toString()
-                        val multiplier = inputtedAmount.toFloat() / rate
-                        changeMultiplier.invoke(multiplier)
                         subject.onNext(multiplier)
+                        changeMultiplier.invoke(multiplier)
+                        inputtedAmount = typedAmount
                     }
         }
 
         private fun onCurrencySelected() {
             selectedItemToTop()
+            KeyboardUtils.showKeyboard(amountInput)
             amountInput.requestFocus()
             amountInput.setSelection(amountInput.text.length)
-            KeyboardUtils.showKeyboard(amountInput)
         }
 
         private fun selectedItemToTop() {
