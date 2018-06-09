@@ -1,32 +1,30 @@
-package haroldolivieri.currencyexchanger.feature
+package haroldolivieri.currencyexchanger.feature.currencyList
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
-import dagger.android.support.DaggerAppCompatActivity
 
 import haroldolivieri.currencyexchanger.R
-import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import kotlinx.android.synthetic.main.activity_main.*
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
-import java.util.*
 import javax.inject.Inject
 import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import android.support.v4.content.ContextCompat
-import android.os.Build
-import android.view.WindowManager
+import haroldolivieri.currencyexchanger.feature.BaseActivity
 
-class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.View {
+class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
+        BaseActivity(), CurrencyListContract.View {
 
-    companion object {
-        private val TAG = CurrencyListActivity::class.java.simpleName
+    override val internetChangesCallback: (Boolean) -> Unit = { connected ->
+        if (!connected) {
+            showSnackBar(currencyList, R.string.check_internet_conn, Snackbar.LENGTH_INDEFINITE)
+        } else {
+            hideSnackBar()
+        }
     }
 
     @Inject
@@ -37,49 +35,44 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
             currencyPresenter.saveNewSortList(it)
         }, changeInputtedAmount = {
             currencyPresenter.saveNewMultiplier(it)
-        },afterMoveAnimation = {
+        }, afterMoveAnimation = {
             currencyList.scrollToPosition(0)
             currencyList.adapter.notifyDataSetChanged()
         })
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         currencyPresenter.onCreate()
 
         setupRecyclerView()
-        setupFullscreenMode()
-        setupKeyboardBehavior()
         setupCollapseToolbarBehavior()
+
+        setupKeyboardListener({ isVisible ->
+            if (!isVisible) {
+                focusThief.requestFocus()
+                currencyAdapter.resetSelectedCurrency()
+            }
+        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        KeyboardUtils.removeAllKeyboardToggleListeners()
         currencyPresenter.onDestroy()
-
     }
 
     override fun showCurrencyList(rates: List<CurrencyItem>) {
+        hideSnackBar()
         currencyAdapter.setRates(rates)
     }
 
-    override fun updateInputtedAmount(cachedInputtedAmount: Float) {
+    override fun updateInputtedAmount(cachedInputtedAmount: String) {
         currencyAdapter.setInputtedAmount(cachedInputtedAmount)
     }
 
-    override fun showRateInfo(date: Date, base: Currency) {
-        Log.i(TAG, "$date & $base")
-    }
-
     override fun showError(message: String?) {
-        Log.e(TAG, "$message")
+        showSnackBar(currencyList, R.string.generic_error, Snackbar.LENGTH_INDEFINITE)
     }
 
     private fun setupCollapseToolbarBehavior() {
@@ -102,18 +95,6 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         })
     }
 
-    private fun setupKeyboardBehavior() {
-        KeyboardUtils.addKeyboardToggleListener(this@CurrencyListActivity,
-                object : KeyboardUtils.SoftKeyboardToggleListener {
-                    override fun onToggleSoftKeyboard(isVisible: Boolean) {
-                        if (!isVisible) {
-                            focusThief.requestFocus()
-                            currencyAdapter.resetSelectedCurrency()
-                        }
-                    }
-                })
-    }
-
     private fun setToolbarTitle() {
         collapsingToolbar.title = getString(R.string.app_name)
         val tf = Typeface.createFromAsset(assets, getString(R.string.font_montserrat_semi_bold))
@@ -134,13 +115,5 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
 
         appBarLayout.background = ContextCompat
                 .getDrawable(this, R.drawable.revolut_gradient)
-    }
-
-    @SuppressLint("ObsoleteSdkInt")
-    private fun setupFullscreenMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        }
     }
 }

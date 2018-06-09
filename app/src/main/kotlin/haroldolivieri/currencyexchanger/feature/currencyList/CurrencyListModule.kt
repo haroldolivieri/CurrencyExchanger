@@ -1,4 +1,4 @@
-package haroldolivieri.currencyexchanger.feature
+package haroldolivieri.currencyexchanger.feature.currencyList
 
 import dagger.Module
 import dagger.Provides

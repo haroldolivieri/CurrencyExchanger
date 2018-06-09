@@ -39,4 +39,6 @@
     <string name="try_currency_name">Turkish Lira</string>
     <string name="usd_currency_name">US Dollar</string>
     <string name="zar_currency_name">South African Rand</string>
+    <string name="generic_error">Unexpected error. Try again</string>
+    <string name="check_internet_conn">The values are not being updated, check your internet connection</string>
 </resources>

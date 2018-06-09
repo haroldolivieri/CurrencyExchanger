@@ -32,4 +32,6 @@
     <string name="try_currency_name">Lira Turca</string>
     <string name="usd_currency_name">Dólar Americano</string>
     <string name="zar_currency_name">Rande Sul-Africano</string>
+    <string name="generic_error">Erro inesperado. Tente novamente</string>
+    <string name="check_internet_conn">Os valores não estão sendo atualizados, verifique sua conexão com a internet</string>
 </resources>

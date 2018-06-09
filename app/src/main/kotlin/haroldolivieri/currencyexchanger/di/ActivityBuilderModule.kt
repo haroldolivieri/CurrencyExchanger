@@ -2,8 +2,8 @@ package haroldolivieri.currencyexchanger.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import haroldolivieri.currencyexchanger.feature.CurrencyListActivity
-import haroldolivieri.currencyexchanger.feature.CurrencyListModule
+import haroldolivieri.currencyexchanger.feature.currencyList.CurrencyListActivity
+import haroldolivieri.currencyexchanger.feature.currencyList.CurrencyListModule
 import haroldolivieri.currencyexchanger.repository.local.LocalModule
 import haroldolivieri.currencyexchanger.repository.remote.RemoteModule
 

@@ -1,4 +1,4 @@
-package haroldolivieri.currencyexchanger.feature
+package haroldolivieri.currencyexchanger.feature.currencyList
 
 import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.repository.CurrencyRepository
@@ -37,8 +37,10 @@ class CurrencyListPresenter
     private fun fetchMultiplier() {
         currencyRepository
                 .fetchInputtedAmount()
-                .subscribe({view.updateInputtedAmount(it)},
-                        {t -> view.showError(t.message)})
+                .subscribe({
+                    val typedAmount = if (it == 0F) { "0" } else { it.toString() }
+                    view.updateInputtedAmount(typedAmount)
+                }, {t -> view.showError(t.message)})
     }
 
     private fun fetchRates() {

@@ -10,8 +10,7 @@ import android.view.inputmethod.InputMethodManager
 
 import java.util.HashMap
 
-class KeyboardUtils private constructor(activity: Activity,
-                                        private var callback: SoftKeyboardToggleListener?) :
+class KeyboardUtils (activity: Activity, private var onToggleSoftKeyboard: (Boolean) -> Unit) :
         ViewTreeObserver.OnGlobalLayoutListener {
 
     private val rootView: View by lazy {
@@ -26,10 +25,6 @@ class KeyboardUtils private constructor(activity: Activity,
         screenDensity = activity.resources.displayMetrics.density
     }
 
-    interface SoftKeyboardToggleListener {
-        fun onToggleSoftKeyboard(isVisible: Boolean)
-    }
-
     override fun onGlobalLayout() {
         val rect = Rect()
         rootView.getWindowVisibleDisplayFrame(rect)
@@ -38,40 +33,14 @@ class KeyboardUtils private constructor(activity: Activity,
         val dp = heightDiff / screenDensity
         val isVisible = dp > MAGIC_NUMBER
 
-        if (callback != null && (previousValue == null || isVisible != previousValue)) {
+        if (previousValue == null || isVisible != previousValue) {
             previousValue = isVisible
-            callback!!.onToggleSoftKeyboard(isVisible)
+            onToggleSoftKeyboard.invoke(isVisible)
         }
-    }
-
-    private fun removeListener() {
-        callback = null
-        rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
     }
 
     companion object {
         private const val MAGIC_NUMBER = 200
-        private var listenerMap = HashMap<SoftKeyboardToggleListener, KeyboardUtils>()
-
-        fun addKeyboardToggleListener(act: Activity, listener: SoftKeyboardToggleListener) {
-            removeKeyboardToggleListener(listener)
-            listenerMap[listener] = KeyboardUtils(act, listener)
-        }
-
-        private fun removeKeyboardToggleListener(listener: SoftKeyboardToggleListener) {
-            if (listenerMap.containsKey(listener)) {
-                val keyboardUtils : KeyboardUtils? = listenerMap[listener]
-                keyboardUtils?.removeListener()
-                listenerMap.remove(listener)
-            }
-        }
-
-        fun removeAllKeyboardToggleListeners() {
-            for (listener in listenerMap.keys)
-                listenerMap[listener]?.removeListener()
-
-            listenerMap.clear()
-        }
 
         fun showKeyboard(activeView: View) {
             val inputMethodManager = activeView.context
