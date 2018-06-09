@@ -9,7 +9,7 @@ object CurrencyListContract {
         fun showCurrencyList(rates: List<CurrencyItem>)
         fun showRateInfo(date : Date, base : Currency)
         fun showError(message: String?)
-        fun updateMultiplier(multiplier: Float)
+        fun updateInputtedAmount(multiplier: Float)
     }
 
     interface Presenter {

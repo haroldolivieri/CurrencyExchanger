@@ -31,13 +31,13 @@ class CurrencyListPresenter
     }
 
     override fun saveNewMultiplier(multiplier: Float) {
-        currencyRepository.saveMultiplier(multiplier)
+        currencyRepository.saveInputtedAmount(multiplier)
     }
 
     private fun fetchMultiplier() {
         currencyRepository
-                .fetchMultiplier()
-                .subscribe({view.updateMultiplier(it)},
+                .fetchInputtedAmount()
+                .subscribe({view.updateInputtedAmount(it)},
                         {t -> view.showError(t.message)})
     }
 

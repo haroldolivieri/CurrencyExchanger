@@ -35,7 +35,7 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
     private val currencyAdapter by lazy {
         CurrencyAdapter(changeSavedOrder = {
             currencyPresenter.saveNewSortList(it)
-        }, changeMultiplier = {
+        }, changeInputtedAmount = {
             currencyPresenter.saveNewMultiplier(it)
         },afterMoveAnimation = {
             currencyList.scrollToPosition(0)
@@ -70,8 +70,8 @@ class CurrencyListActivity : DaggerAppCompatActivity(), CurrencyListContract.Vie
         currencyAdapter.setRates(rates)
     }
 
-    override fun updateMultiplier(multiplier: Float) {
-        currencyAdapter.setMultiplier(multiplier)
+    override fun updateInputtedAmount(cachedInputtedAmount: Float) {
+        currencyAdapter.setInputtedAmount(cachedInputtedAmount)
     }
 
     override fun showRateInfo(date: Date, base: Currency) {

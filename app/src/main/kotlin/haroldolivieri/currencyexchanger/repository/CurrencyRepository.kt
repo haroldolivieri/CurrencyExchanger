@@ -4,7 +4,6 @@ import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import haroldolivieri.currencyexchanger.repository.local.LocalStore
 import haroldolivieri.currencyexchanger.repository.local.SharedPreferenceLocalStore
-import haroldolivieri.currencyexchanger.repository.local.SharedPreferenceStore
 import haroldolivieri.currencyexchanger.repository.remote.CurrencyRatingService
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -16,15 +15,15 @@ class CurrencyRepository
                     @SharedPreferenceLocalStore private val localStore: LocalStore)
     : Repository {
 
-    override fun saveMultiplier(multiplier: Float) {
-        localStore.saveMultiplier(multiplier).subscribe()
+    override fun saveInputtedAmount(inputtedAmount: Float) {
+        localStore.saveInputtedAmount(inputtedAmount).subscribe()
     }
 
     override fun saveNewSortList(newCurrencyOrder: List<Currency>) {
         localStore.saveNewOrder(newCurrencyOrder).subscribe()
     }
 
-    override fun fetchMultiplier(): Single<Float> = localStore.fetchMultiplier()
+    override fun fetchInputtedAmount(): Single<Float> = localStore.fetchInputtedAmount()
 
     override fun fetchOrderedCurrencies(): Single<List<CurrencyItem>> =
             Single.zip(currencyItemsStream(), orderListStream(),

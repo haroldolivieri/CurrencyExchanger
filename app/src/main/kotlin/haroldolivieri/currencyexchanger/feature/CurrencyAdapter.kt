@@ -25,7 +25,7 @@ import io.reactivex.subjects.BehaviorSubject
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val changeSavedOrder: (List<Currency>) -> Unit,
-                      private val changeMultiplier: (Float) -> Unit,
+                      private val changeInputtedAmount: (Float) -> Unit,
                       private val afterMoveAnimation: () -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
@@ -45,8 +45,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         selectedCurrency = null
     }
 
-    fun setMultiplier(multiplier : Float) {
-        subject.onNext(multiplier)
+    fun setInputtedAmount(cachedAmount : Float) {
+        inputtedAmount = cachedAmount.toString()
     }
 
     fun setRates(rates: List<CurrencyItem>) {
@@ -90,18 +90,18 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             val currency = currencyItem.currency
             val rate = currencyItem.rate
 
-            when (selectedCurrency) {
-                currency -> {
-                    amountInput.requestFocus()
-                    amountInput.setText(inputtedAmount)
-                    amountInput.setSelection(amountInput.text.length)
-                    stopObservingItems()
-                    startEmittingItems(rate)
-                }
-                else -> {
-                    startObservingItems(rate)
-                    stopEmittingItems()
-                }
+            if (layoutPosition == 0) {
+                amountInput.setText(inputtedAmount)
+                stopObservingItems()
+                startEmittingItems(rate)
+            } else {
+                startObservingItems(rate)
+                stopEmittingItems()
+            }
+
+            if (selectedCurrency == currency) {
+                amountInput.requestFocus()
+                amountInput.setSelection(amountInput.text.length)
             }
 
             RxTextView.textChanges(amountInput)
@@ -152,8 +152,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                         val multiplier = typedAmount.toFloat() / rate
 
                         subject.onNext(multiplier)
-                        changeMultiplier.invoke(multiplier)
                         inputtedAmount = typedAmount
+                        changeInputtedAmount.invoke(typedAmount.toFloat())
                     }
         }
 

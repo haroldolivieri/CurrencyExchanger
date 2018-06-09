@@ -14,7 +14,7 @@ class SharedPreferenceStore
 
     companion object {
         private const val ORDERED_LIST = "orderedList"
-        private const val MULTIPLIER = "multiplier"
+        private const val INPUTTED_AMOUNT = "inputtedAmount"
     }
 
     private val gson = Gson()
@@ -37,16 +37,16 @@ class SharedPreferenceStore
         return Single.fromCallable { gson.fromJson<List<Currency>>(json, listType) }
     }
 
-    override fun saveMultiplier(multiplier: Float): Completable {
+    override fun saveInputtedAmount(inputtedAmount: Float): Completable {
         return Completable.fromCallable {
             sharedPreferences
                     .edit()
-                    .putFloat(MULTIPLIER, multiplier)
+                    .putFloat(INPUTTED_AMOUNT, inputtedAmount)
                     .apply()
         }
     }
 
-    override fun fetchMultiplier(): Single<Float> {
-        return Single.fromCallable { sharedPreferences.getFloat(MULTIPLIER, 0F) }
+    override fun fetchInputtedAmount(): Single<Float> {
+        return Single.fromCallable { sharedPreferences.getFloat(INPUTTED_AMOUNT, 0F) }
     }
 }
