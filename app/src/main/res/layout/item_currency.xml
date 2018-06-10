@@ -52,8 +52,8 @@
                 tools:text="British Pound" />
         </RelativeLayout>
 
-
         <EditText
+            android:digits="0123456789."
             android:id="@+id/amountInput"
             fontPath="@string/font_montserrat_semi_bold"
             android:layout_width="wrap_content"

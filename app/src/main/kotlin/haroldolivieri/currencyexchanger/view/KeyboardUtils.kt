@@ -10,8 +10,11 @@ import android.view.inputmethod.InputMethodManager
 
 import java.util.HashMap
 
-class KeyboardUtils (activity: Activity, private var onToggleSoftKeyboard: (Boolean) -> Unit) :
+class KeyboardUtils(activity: Activity, private var onToggleSoftKeyboard: (Boolean) -> Unit) :
         ViewTreeObserver.OnGlobalLayoutListener {
+
+    private var isOpen: Boolean = false
+    private val MAGIC_NUMBER = 200
 
     private val rootView: View by lazy {
         (activity.findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
@@ -35,23 +38,30 @@ class KeyboardUtils (activity: Activity, private var onToggleSoftKeyboard: (Bool
 
         if (previousValue == null || isVisible != previousValue) {
             previousValue = isVisible
+            isOpen = isVisible
             onToggleSoftKeyboard.invoke(isVisible)
         }
     }
 
-    companion object {
-        private const val MAGIC_NUMBER = 200
 
-        fun showKeyboard(activeView: View) {
-            val inputMethodManager = activeView.context
-                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.showSoftInput(activeView, InputMethodManager.SHOW_IMPLICIT)
+    fun showKeyboard(activeView: View) {
+        if (isOpen) {
+            return
         }
 
-        fun closeKeyboard(activeView: View) {
-            val inputMethodManager = activeView.context
-                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(activeView.windowToken, 0)
-        }
+        val inputMethodManager = activeView.context
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(activeView, InputMethodManager.SHOW_FORCED)
     }
+
+    fun closeKeyboard(activeView: View) {
+        if (!isOpen) {
+            return
+        }
+
+        val inputMethodManager = activeView.context
+                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(activeView.windowToken, 0)
+    }
+
 }

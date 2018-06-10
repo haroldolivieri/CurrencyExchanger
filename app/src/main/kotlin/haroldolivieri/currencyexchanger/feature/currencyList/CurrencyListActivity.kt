@@ -12,7 +12,6 @@ import android.view.View
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
 import javax.inject.Inject
-import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import haroldolivieri.currencyexchanger.feature.BaseActivity
@@ -22,6 +21,16 @@ import kotlinx.android.synthetic.main.currency_list_content.*
 class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         BaseActivity(), CurrencyListContract.View {
 
+    @Inject
+    lateinit var currencyPresenter: CurrencyListContract.Presenter
+
+    override val keyboardVisibilityCallback: (Boolean) -> Unit = { isVisible ->
+        if (!isVisible) {
+            focusThief.requestFocus()
+            currencyAdapter.resetSelectedCurrency()
+        }
+    }
+
     override val internetChangesCallback: (Boolean) -> Unit = { connected ->
         if (!connected) {
             showSnackBar(currencyList, R.string.check_internet_conn, Snackbar.LENGTH_INDEFINITE)
@@ -29,9 +38,6 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
             hideSnackBar()
         }
     }
-
-    @Inject
-    lateinit var currencyPresenter: CurrencyListContract.Presenter
 
     private val currencyAdapter by lazy {
         CurrencyAdapter(changeInputtedAmount = {
@@ -41,23 +47,17 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         }, afterOrderChanged = {
             currencyList.adapter.notifyItemMoved(it, 0)
             Handler().postDelayed({currencyList.adapter.notifyDataSetChanged()}, 250)
+        }, openKeyboard = {
+            keyboardUtils.showKeyboard(it)
         })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         currencyPresenter.onCreate()
 
         setupRecyclerView()
         setupCollapseToolbarBehavior()
-
-        setupKeyboardListener({ isVisible ->
-            if (!isVisible) {
-                focusThief.requestFocus()
-                currencyAdapter.resetSelectedCurrency()
-            }
-        })
     }
 
     override fun onDestroy() {
@@ -97,7 +97,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
     private fun onScrollListener(): RecyclerView.OnScrollListener {
         return object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                KeyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
+                keyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
             }
         }
     }

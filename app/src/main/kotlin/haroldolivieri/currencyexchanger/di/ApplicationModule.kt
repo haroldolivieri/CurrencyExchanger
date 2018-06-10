@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Singleton
 

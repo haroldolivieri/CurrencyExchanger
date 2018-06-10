@@ -28,14 +28,17 @@ import java.util.*
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val changeSavedOrder: (List<Currency>) -> Unit,
                       private val changeInputtedAmount: (String) -> Unit,
-                      private val afterOrderChanged: (Int) -> Unit) :
+                      private val afterOrderChanged: (Int) -> Unit,
+                      private val openKeyboard: (EditText) -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
     private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
     private var selectedCurrency: Currency? = null
 
     private var inputtedAmount: String = ""
-        get() { return if (field == "0") ""  else field }
+        get() {
+            return if (field == "0") "" else field
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyHolder {
         val view = LayoutInflater.from(parent.context)
@@ -47,7 +50,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         selectedCurrency = null
     }
 
-    fun setInputtedAmount(cachedAmount : String) {
+    fun setInputtedAmount(cachedAmount: String) {
         inputtedAmount = cachedAmount
     }
 
@@ -98,12 +101,11 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 startEmittingItems(rate)
 
                 if (selectedCurrency == currency) {
-                    openKeyboard()
+                    amountInput.requestFocus()
                     amountInput.limitLength(9, 2)
                 }
 
             } else {
-                amountInput.clearFocus()
                 amountInput.resetLimitLength()
                 startObservingItems(rate)
                 stopEmittingItems()
@@ -149,7 +151,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             stopEmittingItems()
 
             textChangesDisposable = RxTextView.textChanges(amountInput)
-                    .map { if (it.isEmpty()) "0" else it}
+                    .map { if (it.isEmpty()) "0" else it }
                     .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe {
                         val typedAmount = it.toString()
@@ -162,7 +164,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         }
 
         private fun onCurrencySelected() {
-            openKeyboard()
+            requestFocus()
 
             layoutPosition.also { currentPosition ->
                 selectedCurrency = adapterList?.get(currentPosition)?.currency
@@ -175,10 +177,10 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             }
         }
 
-        private fun openKeyboard() {
+        private fun requestFocus() {
             amountInput.requestFocus()
             amountInput.setSelection(amountInput.text.length)
-            KeyboardUtils.showKeyboard(amountInput)
+            openKeyboard.invoke(amountInput)
         }
 
         private fun stopObservingItems() {

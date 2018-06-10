@@ -24,8 +24,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     protected val TAG : String = this::class.java.simpleName
 
     abstract val layout: Int
-    private var snackBar: Snackbar? = null
     abstract val internetChangesCallback : (Boolean) -> Unit
+    abstract val keyboardVisibilityCallback : (Boolean) -> Unit
+
+    private var snackBar: Snackbar? = null
+    internal lateinit var keyboardUtils: KeyboardUtils
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
@@ -40,6 +43,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { it -> internetChangesCallback.invoke(it)}
+
+        keyboardUtils = KeyboardUtils(this, keyboardVisibilityCallback)
     }
 
     internal fun showSnackBar(view: View, message: Int, duration: Int = Snackbar.LENGTH_LONG) {
@@ -60,10 +65,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     internal  fun hideSnackBar() {
         snackBar?.dismiss()
-    }
-
-    internal fun setupKeyboardListener(listener : (Boolean) -> Unit) {
-        KeyboardUtils(this, listener)
     }
 
     @SuppressLint("ObsoleteSdkInt")
