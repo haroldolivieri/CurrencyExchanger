@@ -2,6 +2,7 @@ package haroldolivieri.currencyexchanger.feature.currencyList
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -39,6 +40,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
             currencyPresenter.saveNewSortList(it)
         }, afterOrderChanged = {
             currencyList.adapter.notifyItemMoved(it, 0)
+            Handler().postDelayed({currencyList.adapter.notifyDataSetChanged()}, 250)
         })
     }
 
@@ -72,7 +74,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
     }
 
     override fun showError(message: String?) {
-        Log.e(TAG, "${getString(R.string.generic_error)} -> $message")
+        Log.d(TAG, "${getString(R.string.generic_error)} -> $message")
     }
 
     private fun setupCollapseToolbarBehavior() {
