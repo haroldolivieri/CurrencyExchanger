@@ -68,7 +68,7 @@ dependencies {
 
     implementation "uk.co.chrisjenx:calligraphy:2.3.0"
     implementation "com.github.bumptech.glide:glide:4.0.0"
-    implementation "de.hdodenhof:circleimageview:2.1.0"
+    implementation "com.mikhaellopez:circularimageview:3.0.2"
     implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.1.1"
 
     testImplementation 'junit:junit:4.12'

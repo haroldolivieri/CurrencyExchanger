@@ -94,20 +94,18 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 amountInput.setText(inputtedAmount)
                 stopObservingItems()
                 startEmittingItems(rate)
+
+                if (selectedCurrency == currency) {
+                    openKeyboard()
+                    amountInput.limitLength(9, 2)
+                }
+
             } else {
+                amountInput.clearFocus()
+                amountInput.resetLimitLength()
                 startObservingItems(rate)
                 stopEmittingItems()
             }
-
-            if (selectedCurrency == currency) {
-                amountInput.requestFocus()
-                amountInput.setSelection(amountInput.text.length)
-                amountInput.limitLength(9)
-            } else {
-                amountInput.resetLimitLength()
-            }
-
-            amountInput.limitDecimalPlaces(2)
 
             currencyImage.setImageResource(currency.currencyImage())
             currencyName.text = currency.name
@@ -133,7 +131,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             amountChangesDisposable = subject
                     .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe { amountInBaseCurrency ->
-                        if (amountInBaseCurrency < 0F) {
+                        if (amountInBaseCurrency <= 0F) {
                             amountInput.setText("")
                             return@subscribe
                         }
@@ -148,7 +146,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
             textChangesDisposable = RxTextView.textChanges(amountInput)
                     .map { if (it.isEmpty()) "0" else it}
-                    .toFlowable(BackpressureStrategy.DROP)
+                    .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe {
                         val typedAmount = it.toString()
                         val multiplier = typedAmount.toFloat() / rate
@@ -160,13 +158,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
         }
 
         private fun onCurrencySelected() {
-            selectedItemToTop()
-            amountInput.requestFocus()
-            amountInput.setSelection(amountInput.text.length)
-            KeyboardUtils.showKeyboard(amountInput)
-        }
+            openKeyboard()
 
-        private fun selectedItemToTop() {
             layoutPosition.also { currentPosition ->
                 selectedCurrency = adapterList?.get(currentPosition)?.currency
                 inputtedAmount = amountInput.text.toString()
@@ -175,10 +168,15 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                     changeSavedOrder.invoke(adapterList?.map { it.currency }!!)
                     notifyItemMoved(currentPosition, 0)
                 }
-                android.os.Handler().postDelayed({
-                    afterMoveAnimation.invoke()
-                }, 300)
+
+                android.os.Handler().postDelayed({ afterMoveAnimation.invoke() }, 300)
             }
+        }
+
+        private fun openKeyboard() {
+            amountInput.requestFocus()
+            amountInput.setSelection(amountInput.text.length)
+            KeyboardUtils.showKeyboard(amountInput)
         }
 
         private fun stopObservingItems() {

@@ -83,16 +83,13 @@ fun Currency.currencyImage() : Int {
     }
 }
 
-fun EditText.limitLength(maxLength: Int) {
-    filters += InputFilter.LengthFilter(maxLength)
+fun EditText.limitLength(maxLength: Int, decimalPlaces: Int) {
+    filters = arrayOf(InputFilter.LengthFilter(maxLength),
+            DecimalDigitsInputFilter(decimalPlaces))
 }
 
 fun EditText.resetLimitLength() {
     filters = emptyArray()
-}
-
-fun EditText.limitDecimalPlaces(limit : Int) {
-    filters += DecimalDigitsInputFilter(limit)
 }
 
 

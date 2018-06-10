@@ -41,4 +41,5 @@
     <string name="zar_currency_name">South African Rand</string>
     <string name="generic_error">Unexpected error. Try again</string>
     <string name="check_internet_conn">The values are not being updated, check your internet connection</string>
+    <string name="loading">Loading currencies</string>
 </resources>

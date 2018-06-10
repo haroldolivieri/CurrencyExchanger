@@ -10,12 +10,13 @@ import android.view.View
 
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import haroldolivieri.currencyexchanger.view.KeyboardUtils
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import haroldolivieri.currencyexchanger.feature.BaseActivity
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.currency_list_content.*
 
 class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         BaseActivity(), CurrencyListContract.View {
@@ -37,8 +38,10 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         }, changeInputtedAmount = {
             currencyPresenter.saveNewInputtedAmount(it)
         }, afterMoveAnimation = {
-            currencyList.scrollToPosition(0)
+            currencyList.clearOnScrollListeners()
             currencyList.adapter.notifyDataSetChanged()
+            currencyList.scrollToPosition(0)
+            currencyList.addOnScrollListener(onScrollListener())
         })
     }
 
@@ -88,11 +91,15 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         currencyList.addItemDecoration(dividerItemDecoration)
         currencyList.layoutManager = linearLayoutManager
         currencyList.adapter = currencyAdapter
-        currencyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        currencyList.setEmptyView(emptyView)
+    }
+
+    private fun onScrollListener(): RecyclerView.OnScrollListener {
+        return object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 KeyboardUtils.closeKeyboard(findViewById<View>(android.R.id.content))
             }
-        })
+        }
     }
 
     private fun setToolbarTitle() {

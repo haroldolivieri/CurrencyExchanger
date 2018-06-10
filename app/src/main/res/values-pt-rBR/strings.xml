@@ -34,4 +34,5 @@
     <string name="zar_currency_name">Rande Sul-Africano</string>
     <string name="generic_error">Erro inesperado. Tente novamente</string>
     <string name="check_internet_conn">Os valores não estão sendo atualizados, verifique sua conexão com a internet</string>
+    <string name="loading">Carregando moedas</string>
 </resources>

@@ -6,19 +6,7 @@
     android:layout_alignParentStart="true"
     android:layout_alignParentTop="true">
 
-    <!-- Dummy item to prevent any item list from receiving focus on startup-->
-    <View
-        android:id="@+id/focusThief"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/currencyList"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <include layout="@layout/currency_list_content" />
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <!-- Dummy item to prevent any item list from receiving focus on startup-->
+    <View
+        android:id="@+id/focusThief"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/loadingMessage"
+        app:layout_constraintEnd_toEndOf="@+id/loadingMessage"
+        app:layout_constraintStart_toStartOf="@+id/loadingMessage"
+        app:layout_constraintTop_toBottomOf="@+id/currencyList" />
+
+    <TextView
+        android:id="@+id/loadingMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        app:layout_constraintBottom_toTopOf="@+id/currencyList"
+        app:layout_constraintEnd_toStartOf="@+id/currencyList"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/currencyList"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    <haroldolivieri.currencyexchanger.view.RecyclerViewEmpty
+        android:id="@+id/currencyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <android.support.constraint.Group
+        android:id="@+id/emptyView"
+        android:layout_width="wrap_content"
+        app:constraint_referenced_ids="loadingMessage, progressBar"
+        android:layout_height="wrap_content" />
+
+</android.support.constraint.ConstraintLayout>
