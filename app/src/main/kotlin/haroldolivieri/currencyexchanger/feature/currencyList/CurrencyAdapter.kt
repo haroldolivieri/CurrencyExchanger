@@ -21,6 +21,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import haroldolivieri.currencyexchanger.view.*
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
@@ -136,8 +138,10 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                             return@subscribe
                         }
 
-                        val df = DecimalFormat("#.##")
-                        amountInput.setText(df.format(amountInBaseCurrency * rate))
+                        val numberFormat = NumberFormat
+                                .getNumberInstance(Locale.ENGLISH) as DecimalFormat
+                        numberFormat.applyPattern("#.##")
+                        amountInput.setText(numberFormat.format(amountInBaseCurrency * rate))
                     }
         }
 
