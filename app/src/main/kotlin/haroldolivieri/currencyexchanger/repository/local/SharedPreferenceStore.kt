@@ -9,7 +9,7 @@ import javax.inject.Inject
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SharedPreferenceStore
+open class SharedPreferenceStore
 @Inject constructor(private val sharedPreferences: SharedPreferences) : LocalStore {
 
     companion object {
@@ -39,10 +39,7 @@ class SharedPreferenceStore
 
     override fun saveInputtedAmount(inputtedAmount: String): Completable {
         return Completable.fromCallable {
-            sharedPreferences
-                    .edit()
-                    .putString(INPUTTED_AMOUNT, inputtedAmount)
-                    .apply()
+            sharedPreferences.edit().putString(INPUTTED_AMOUNT, inputtedAmount).apply()
         }
     }
 

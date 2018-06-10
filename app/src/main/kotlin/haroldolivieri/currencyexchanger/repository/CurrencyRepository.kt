@@ -43,23 +43,33 @@ class CurrencyRepository
                         //Reorder list according cached order
                         val sortedRatesList = mutableListOf<CurrencyItem>()
 
-                        order.forEachIndexed { index, orderedCurrencyItem ->
-                            val newCurrencyItem = items.find { orderedCurrencyItem == it.currency }
-                            newCurrencyItem?.let { sortedRatesList.add(index, it) }
+                        try {
+                            order.forEachIndexed { index, orderedCurrencyItem ->
+                                val newCurrencyItem = items.find { orderedCurrencyItem == it.currency }
+                                newCurrencyItem?.let { sortedRatesList.add(index, it) }
+                            }
+                        } catch (e : Exception) {
+                            return@BiFunction items
                         }
 
-                        sortedRatesList
+                        if (sortedRatesList.size < items.size) {
+                            items
+                        } else {
+                            sortedRatesList
+                        }
+
                     })
 
-    private fun currencyItemsStream(): Single<MutableList<CurrencyItem>> =
-            service.getRatesByCurrencyBase(Currency.EUR.name)
+    private fun currencyItemsStream():
+            Single<MutableList<CurrencyItem>> =
+            service.getRatesByCurrencyBase()
                     .flatMap { rate ->
                         /*
                             Adding EUR to the main list
                          */
                         val items = rate.rates.map { CurrencyItem(it.key, it.value) }
                                 as MutableList<CurrencyItem>
-                        items.add(CurrencyItem(Currency.EUR, 1F))
+                        items.add(CurrencyItem(rate.currencyBase, 1F))
                         Single.fromCallable { items }
                     }
 
