@@ -33,15 +33,12 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
     lateinit var currencyPresenter: CurrencyListContract.Presenter
 
     private val currencyAdapter by lazy {
-        CurrencyAdapter(changeSavedOrder = {
-            currencyPresenter.saveNewSortList(it)
-        }, changeInputtedAmount = {
+        CurrencyAdapter(changeInputtedAmount = {
             currencyPresenter.saveNewInputtedAmount(it)
-        }, afterMoveAnimation = {
-            currencyList.clearOnScrollListeners()
-            currencyList.adapter.notifyDataSetChanged()
-            currencyList.scrollToPosition(0)
-            currencyList.addOnScrollListener(onScrollListener())
+        }, changeSavedOrder = {
+            currencyPresenter.saveNewSortList(it)
+        }, afterOrderChanged = {
+            currencyList.adapter.notifyItemMoved(it, 0)
         })
     }
 
@@ -92,6 +89,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         currencyList.layoutManager = linearLayoutManager
         currencyList.adapter = currencyAdapter
         currencyList.setEmptyView(emptyView)
+        currencyList.addOnScrollListener(onScrollListener())
     }
 
     private fun onScrollListener(): RecyclerView.OnScrollListener {

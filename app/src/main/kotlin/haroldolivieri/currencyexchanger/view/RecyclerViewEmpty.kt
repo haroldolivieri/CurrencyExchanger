@@ -1,6 +1,7 @@
 package haroldolivieri.currencyexchanger.view
 
 import android.content.Context
+import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View

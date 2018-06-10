@@ -26,7 +26,7 @@ import java.text.DecimalFormat
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val changeSavedOrder: (List<Currency>) -> Unit,
                       private val changeInputtedAmount: (String) -> Unit,
-                      private val afterMoveAnimation: () -> Unit) :
+                      private val afterOrderChanged: (Int) -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
     private val subject: BehaviorSubject<Float> = BehaviorSubject.create()
@@ -166,10 +166,8 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 adapterList?.removeAt(currentPosition).also {
                     adapterList?.add(0, it!!)
                     changeSavedOrder.invoke(adapterList?.map { it.currency }!!)
-                    notifyItemMoved(currentPosition, 0)
+                    afterOrderChanged.invoke(layoutPosition)
                 }
-
-                android.os.Handler().postDelayed({ afterMoveAnimation.invoke() }, 300)
             }
         }
 
