@@ -13,23 +13,19 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
-import haroldolivieri.currencyexchanger.view.KeyboardUtils
-import haroldolivieri.currencyexchanger.view.currencyImage
-import haroldolivieri.currencyexchanger.view.currencyName
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
-import android.text.Editable
-import android.text.TextWatcher
+import haroldolivieri.currencyexchanger.view.*
 import java.text.DecimalFormat
 
 
 class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null,
                       private val changeSavedOrder: (List<Currency>) -> Unit,
-                      private val changeInputtedAmount: (Float) -> Unit,
+                      private val changeInputtedAmount: (String) -> Unit,
                       private val afterMoveAnimation: () -> Unit) :
         RecyclerView.Adapter<CurrencyAdapter.CurrencyHolder>() {
 
@@ -106,7 +102,12 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             if (selectedCurrency == currency) {
                 amountInput.requestFocus()
                 amountInput.setSelection(amountInput.text.length)
+                amountInput.limitLength(9)
+            } else {
+                amountInput.resetLimitLength()
             }
+
+            amountInput.limitDecimalPlaces(2)
 
             currencyImage.setImageResource(currency.currencyImage())
             currencyName.text = currency.name
@@ -132,16 +133,19 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
             amountChangesDisposable = subject
                     .toFlowable(BackpressureStrategy.LATEST)
                     .subscribe { amountInBaseCurrency ->
-                        if (amountInBaseCurrency == 0F) {
+                        if (amountInBaseCurrency < 0F) {
                             amountInput.setText("")
                             return@subscribe
                         }
-                        amountInput.setText("%.2f".format(amountInBaseCurrency * rate))
+
+                        val df = DecimalFormat("#.##")
+                        amountInput.setText(df.format(amountInBaseCurrency * rate))
                     }
         }
 
         private fun startEmittingItems(rate: Float) {
             stopEmittingItems()
+
             textChangesDisposable = RxTextView.textChanges(amountInput)
                     .map { if (it.isEmpty()) "0" else it}
                     .toFlowable(BackpressureStrategy.DROP)
@@ -151,7 +155,7 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
 
                         subject.onNext(multiplier)
                         inputtedAmount = typedAmount
-                        changeInputtedAmount.invoke(typedAmount.toFloat())
+                        changeInputtedAmount.invoke(typedAmount)
                     }
         }
 
@@ -188,43 +192,5 @@ class CurrencyAdapter(private var adapterList: MutableList<CurrencyItem>? = null
                 textChangesDisposable?.dispose()
             }
         }
-    }
-}
-
-fun EditText.activateCurrencyFormat(): TextWatcher {
-    return object : TextWatcher {
-        internal var current = ""
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            if (s.toString() != current) {
-                this@activateCurrencyFormat.removeTextChangedListener(this)
-
-                var cleanString = s.toString()
-
-                if (count != 0) {
-                    val subStr = cleanString.substring(cleanString.length - 2)
-
-                    if (subStr.contains(".") || subStr.contains(",")) {
-                        cleanString += "0"
-                    }
-                }
-
-                cleanString = cleanString.replace("[,.]".toRegex(), "")
-
-                val parsed = java.lang.Double.parseDouble(cleanString)
-                val df = DecimalFormat("0.00")
-                val formatted = df.format(parsed / 100)
-
-                current = formatted
-                this@activateCurrencyFormat.setText(formatted)
-                this@activateCurrencyFormat.setSelection(formatted.length)
-
-                this@activateCurrencyFormat.addTextChangedListener(this)
-            }
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun afterTextChanged(s: Editable) {}
     }
 }

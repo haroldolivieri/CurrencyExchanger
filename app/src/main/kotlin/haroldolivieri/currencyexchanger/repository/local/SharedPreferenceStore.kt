@@ -37,16 +37,16 @@ class SharedPreferenceStore
         return Single.fromCallable { gson.fromJson<List<Currency>>(json, listType) }
     }
 
-    override fun saveInputtedAmount(inputtedAmount: Float): Completable {
+    override fun saveInputtedAmount(inputtedAmount: String): Completable {
         return Completable.fromCallable {
             sharedPreferences
                     .edit()
-                    .putFloat(INPUTTED_AMOUNT, inputtedAmount)
+                    .putString(INPUTTED_AMOUNT, inputtedAmount)
                     .apply()
         }
     }
 
-    override fun fetchInputtedAmount(): Single<Float> {
-        return Single.fromCallable { sharedPreferences.getFloat(INPUTTED_AMOUNT, 0F) }
+    override fun fetchInputtedAmount(): Single<String> {
+        return Single.fromCallable { sharedPreferences.getString(INPUTTED_AMOUNT, "0") }
     }
 }

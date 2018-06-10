@@ -35,7 +35,7 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         CurrencyAdapter(changeSavedOrder = {
             currencyPresenter.saveNewSortList(it)
         }, changeInputtedAmount = {
-            currencyPresenter.saveNewMultiplier(it)
+            currencyPresenter.saveNewInputtedAmount(it)
         }, afterMoveAnimation = {
             currencyList.scrollToPosition(0)
             currencyList.adapter.notifyDataSetChanged()

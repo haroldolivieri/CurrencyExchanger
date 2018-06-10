@@ -14,7 +14,7 @@ object CurrencyListContract {
     interface Presenter {
         fun onCreate()
         fun onDestroy()
-        fun saveNewMultiplier(multiplier: Float)
+        fun saveNewInputtedAmount(inputtedAmount: String)
         fun saveNewSortList(newCurrencyOrder: List<Currency>)
     }
 }

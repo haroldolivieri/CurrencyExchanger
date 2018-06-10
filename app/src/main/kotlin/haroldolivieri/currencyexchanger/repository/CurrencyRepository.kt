@@ -15,7 +15,7 @@ class CurrencyRepository
                     @SharedPreferenceLocalStore private val localStore: LocalStore)
     : Repository {
 
-    override fun saveInputtedAmount(inputtedAmount: Float) {
+    override fun saveInputtedAmount(inputtedAmount: String) {
         localStore.saveInputtedAmount(inputtedAmount).subscribe()
     }
 
@@ -23,7 +23,7 @@ class CurrencyRepository
         localStore.saveNewOrder(newCurrencyOrder).subscribe()
     }
 
-    override fun fetchInputtedAmount(): Single<Float> = localStore.fetchInputtedAmount()
+    override fun fetchInputtedAmount(): Single<String> = localStore.fetchInputtedAmount()
 
     override fun fetchOrderedCurrencies(): Single<List<CurrencyItem>> =
             Single.zip(currencyItemsStream(), orderListStream(),

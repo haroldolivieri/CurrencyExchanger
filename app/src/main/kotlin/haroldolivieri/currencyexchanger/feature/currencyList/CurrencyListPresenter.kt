@@ -30,15 +30,15 @@ class CurrencyListPresenter
         currencyRepository.saveNewSortList(newCurrencyOrder)
     }
 
-    override fun saveNewMultiplier(multiplier: Float) {
-        currencyRepository.saveInputtedAmount(multiplier)
+    override fun saveNewInputtedAmount(inputtedAmount: String) {
+        currencyRepository.saveInputtedAmount(inputtedAmount)
     }
 
     private fun fetchMultiplier() {
         currencyRepository
                 .fetchInputtedAmount()
                 .subscribe({
-                    val typedAmount = if (it == 0F) { "0" } else { it.toString() }
+                    val typedAmount = if (it.isEmpty()) { "0" } else { it.toString() }
                     view.updateInputtedAmount(typedAmount)
                 }, {t -> view.showError(t.message)})
     }

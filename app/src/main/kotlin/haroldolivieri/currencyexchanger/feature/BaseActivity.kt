@@ -21,7 +21,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
-    val TAG: String = this::class.java.simpleName
+    protected val TAG : String = this::class.java.simpleName
 
     abstract val layout: Int
     private var snackBar: Snackbar? = null

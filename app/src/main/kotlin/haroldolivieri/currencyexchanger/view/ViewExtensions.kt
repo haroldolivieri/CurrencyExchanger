@@ -1,7 +1,11 @@
 package haroldolivieri.currencyexchanger.view
 
+import android.text.InputFilter
+import android.text.Spanned
+import android.widget.EditText
 import haroldolivieri.currencyexchanger.R
 import haroldolivieri.currencyexchanger.domain.Currency
+import java.util.regex.Pattern
 
 fun Currency.currencyName() : Int {
     return when(this) {
@@ -77,4 +81,28 @@ fun Currency.currencyImage() : Int {
         Currency.USD -> R.drawable.usd
         Currency.ZAR -> R.drawable.zar
     }
+}
+
+fun EditText.limitLength(maxLength: Int) {
+    filters += InputFilter.LengthFilter(maxLength)
+}
+
+fun EditText.resetLimitLength() {
+    filters = emptyArray()
+}
+
+fun EditText.limitDecimalPlaces(limit : Int) {
+    filters += DecimalDigitsInputFilter(limit)
+}
+
+
+class DecimalDigitsInputFilter(digitsAfterZero: Int) : InputFilter {
+    private var mPattern: Pattern = Pattern.compile("[0-9]+((\\.[0-9]{0," + (digitsAfterZero - 1) + "})?)||(\\.)?")
+    override fun filter(source: CharSequence,
+                        start: Int, end: Int,
+                        dest: Spanned, dstart: Int, dend: Int): CharSequence? {
+        val matcher = mPattern.matcher(dest)
+        return if (!matcher.matches()) "" else null
+    }
+
 }

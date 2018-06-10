@@ -7,6 +7,6 @@ import io.reactivex.Single
 interface LocalStore {
     fun saveNewOrder(orderList: List<Currency>): Completable
     fun fetchOrderList(): Single<List<Currency>>
-    fun saveInputtedAmount(inputtedAmount : Float) : Completable
-    fun fetchInputtedAmount() : Single<Float>
+    fun saveInputtedAmount(inputtedAmount : String) : Completable
+    fun fetchInputtedAmount() : Single<String>
 }

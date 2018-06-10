@@ -2,10 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:focusable="true">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,17 +22,17 @@
 
     <TextView
         android:id="@+id/currencyName"
-        android:textColor="@color/colorPrimary"
+        fontPath="@string/font_montserrat_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="GBP"
-        fontPath="@string/font_montserrat_semi_bold"
+        android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/currencyDescription"
         app:layout_constraintStart_toStartOf="@+id/currencyDescription"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:ignore="MissingPrefix" />
+        tools:ignore="MissingPrefix"
+        tools:text="GBP" />
 
     <TextView
         android:id="@+id/currencyDescription"
@@ -40,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:ellipsize="marquee"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/currencyImage"
         app:layout_constraintTop_toBottomOf="@+id/currencyName"
@@ -47,35 +48,24 @@
         tools:text="British Pound" />
 
 
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="currencyName,currencyDescription"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
-        fontPath="@string/font_montserrat_semi_bold"
         android:id="@+id/amountInput"
+        fontPath="@string/font_montserrat_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="@color/colorPrimary"
         android:hint="@string/_0"
-        android:inputType="numberDecimal"
         android:imeOptions="actionDone"
-        android:maxLength="8"
+        android:inputType="numberDecimal"
         android:singleLine="true"
+        android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/barrier7"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingPrefix" />
+        app:layout_constraintVertical_bias="0"
+        tools:ignore="MissingPrefix"
+        tools:text="kjs" />
 </android.support.constraint.ConstraintLayout>
