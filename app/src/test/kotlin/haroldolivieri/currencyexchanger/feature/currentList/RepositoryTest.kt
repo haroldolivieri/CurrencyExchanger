@@ -1,4 +1,4 @@
-package haroldolivieri.currencyexchanger
+package haroldolivieri.currencyexchanger.feature.currentList
 
 import haroldolivieri.currencyexchanger.repository.CurrencyRepository
 import haroldolivieri.currencyexchanger.repository.local.SharedPreferenceStore
@@ -16,7 +16,6 @@ import io.reactivex.Single.just
 import org.mockito.Mockito.`when`
 import java.util.*
 import org.junit.Assert.*
-
 
 class RepositoryTest {
 

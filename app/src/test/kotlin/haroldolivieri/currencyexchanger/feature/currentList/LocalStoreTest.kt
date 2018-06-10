@@ -1,4 +1,4 @@
-package haroldolivieri.currencyexchanger
+package haroldolivieri.currencyexchanger.feature.currentList
 
 import android.content.SharedPreferences
 import com.google.gson.Gson

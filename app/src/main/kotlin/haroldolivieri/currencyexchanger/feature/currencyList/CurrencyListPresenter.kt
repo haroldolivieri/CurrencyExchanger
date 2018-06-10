@@ -5,17 +5,16 @@ import haroldolivieri.currencyexchanger.repository.Repository
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CurrencyListPresenter
 @Inject constructor(private val view: CurrencyListContract.View,
                     private val repository: Repository,
-                    val scheduler: Scheduler) :
+                    private val workerScheduler: Scheduler) :
         CurrencyListContract.Presenter {
 
-    private val worker = scheduler.createWorker()
+    private val worker = workerScheduler.createWorker()
     private val disposable = CompositeDisposable()
 
     override fun onCreate() {
