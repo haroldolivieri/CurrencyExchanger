@@ -11,7 +11,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.item_currency.runner.AndroidJUnitRunner"
     }
 
     testOptions {
@@ -22,7 +22,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
+        test.java.srcDirs += 'src/item_currency/kotlin'
     }
 
     buildTypes {
@@ -73,6 +73,6 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.item_currency:runner:1.0.2'
+    androidTestImplementation 'com.android.support.item_currency.espresso:espresso-core:3.0.2'
 }
