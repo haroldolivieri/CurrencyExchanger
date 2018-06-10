@@ -1,7 +1,10 @@
 package haroldolivieri.currencyexchanger.feature.currencyList
 
+import android.support.annotation.VisibleForTesting
 import haroldolivieri.currencyexchanger.domain.Currency
 import haroldolivieri.currencyexchanger.domain.CurrencyItem
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 object CurrencyListContract {

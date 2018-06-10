@@ -1,7 +1,8 @@
 package haroldolivieri.currencyexchanger.feature.currencyList
 
 import haroldolivieri.currencyexchanger.domain.Currency
-import haroldolivieri.currencyexchanger.repository.CurrencyRepository
+import haroldolivieri.currencyexchanger.repository.Repository
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -10,15 +11,16 @@ import javax.inject.Inject
 
 class CurrencyListPresenter
 @Inject constructor(private val view: CurrencyListContract.View,
-                    private val currencyRepository: CurrencyRepository) :
+                    private val repository: Repository,
+                    val scheduler: Scheduler) :
         CurrencyListContract.Presenter {
 
-    private val worker = Schedulers.io().createWorker()
+    private val worker = scheduler.createWorker()
     private val disposable = CompositeDisposable()
 
     override fun onCreate() {
         fetchRates()
-        fetchMultiplier()
+        fetchInputtedAmount()
     }
 
     override fun onDestroy() {
@@ -27,15 +29,15 @@ class CurrencyListPresenter
     }
 
     override fun saveNewSortList(newCurrencyOrder: List<Currency>) {
-        currencyRepository.saveNewSortList(newCurrencyOrder)
+        repository.saveNewSortList(newCurrencyOrder)
     }
 
     override fun saveNewInputtedAmount(inputtedAmount: String) {
-        currencyRepository.saveInputtedAmount(inputtedAmount)
+        repository.saveInputtedAmount(inputtedAmount)
     }
 
-    private fun fetchMultiplier() {
-        currencyRepository
+    private fun fetchInputtedAmount() {
+        repository
                 .fetchInputtedAmount()
                 .subscribe({
                     val typedAmount = if (it.isEmpty()) { "0" } else { it.toString() }
@@ -45,7 +47,7 @@ class CurrencyListPresenter
 
     private fun fetchRates() {
         worker.schedulePeriodically({
-            disposable.add(currencyRepository.fetchOrderedCurrencies()
+            disposable.add(repository.fetchOrderedCurrencies()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ items ->
                         view.showCurrencyList(items)
@@ -54,4 +56,5 @@ class CurrencyListPresenter
                     }))
         }, 0, 1, TimeUnit.SECONDS)
     }
+
 }
