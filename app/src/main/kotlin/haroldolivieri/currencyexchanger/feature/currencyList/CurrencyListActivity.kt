@@ -60,6 +60,11 @@ class CurrencyListActivity(override val layout : Int = R.layout.activity_main) :
         setupCollapseToolbarBehavior()
     }
 
+    override fun onStop() {
+        super.onStop()
+        keyboardUtils.closeKeyboard(focusThief)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         currencyPresenter.onDestroy()
