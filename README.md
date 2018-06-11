@@ -22,6 +22,7 @@ ReactiveJava2, Retrofit, and Junit4.
 
 For a better UX experience I used the Revolut App as an example to implement some extra features:
 
+* Beautiful interface
 * Cache of the last value inputted
 * Cache of list order priority
 * Multi language support - (ptBr and enUS)
