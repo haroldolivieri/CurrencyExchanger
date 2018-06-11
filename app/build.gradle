@@ -11,7 +11,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.item_currency.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     testOptions {
@@ -78,11 +78,4 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.15.0"
     testImplementation "org.powermock:powermock-api-mockito2:2.0.0-beta.5"
     testImplementation "org.powermock:powermock-module-junit4:2.0.0-beta.5"
-
-    //instrumented tests
-    androidTestImplementation "junit:junit:4.12"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
-    androidTestImplementation "com.android.support.test:runner:1.0.2"
-    androidTestImplementation "com.android.support.test:rules:1.0.2"
-    androidTestImplementation "org.mockito:mockito-core:2.15.0"
 }
